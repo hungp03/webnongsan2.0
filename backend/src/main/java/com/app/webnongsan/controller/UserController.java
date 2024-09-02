@@ -1,11 +1,18 @@
 package com.app.webnongsan.controller;
 
 import com.app.webnongsan.domain.User;
+import com.app.webnongsan.domain.response.PaginationDTO;
+import com.app.webnongsan.domain.response.user.CreateUserDTO;
+import com.app.webnongsan.domain.response.user.UpdateUserDTO;
+import com.app.webnongsan.domain.response.user.UserDTO;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.annotation.ApiMessage;
 import com.app.webnongsan.util.exception.IdInvalidException;
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +25,12 @@ public class UserController {
 
     @PostMapping("users")
     @ApiMessage("Create new user")
-    public ResponseEntity<User> createNewUser(@Valid @RequestBody User user) throws IdInvalidException {
+    public ResponseEntity<CreateUserDTO> createNewUser(@Valid @RequestBody User user) throws IdInvalidException {
         if (this.userService.isExistedEmail(user.getEmail())){
             throw new IdInvalidException("Email " + user.getEmail() + " đã tồn tại");
         }
         User newUser = this.userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToCreateDTO(newUser));
     }
 
     @DeleteMapping("users/{id}")
@@ -36,4 +43,31 @@ public class UserController {
         this.userService.delete(id);
         return ResponseEntity.ok(null);
     }
+
+    @GetMapping("users/{id}")
+    @ApiMessage("Get user by id")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("id") long id) throws IdInvalidException {
+        User currentUser = this.userService.getUserById(id);
+        if (currentUser == null){
+            throw new IdInvalidException("Người dùng với id " + id + " không tồn tại");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToUserDTO(currentUser));
+    }
+
+    @GetMapping("users")
+    @ApiMessage("Fetch users")
+    public ResponseEntity<PaginationDTO> fetchAllUser(@Filter Specification<User> spec, Pageable pageable) {
+        return ResponseEntity.ok(this.userService.fetchAllUser(spec, pageable));
+    }
+
+    @PutMapping("users")
+    @ApiMessage("Update user")
+    public ResponseEntity<UpdateUserDTO> updateUser(@RequestBody User user) throws IdInvalidException {
+        User updatedUser = this.userService.update(user);
+        if (updatedUser == null){
+            throw new IdInvalidException("Người dùng với id " + user.getId() + " không tồn tại");
+        }
+        return ResponseEntity.ok(this.userService.convertToUpdateUserDTO(updatedUser));
+    }
+
 }
