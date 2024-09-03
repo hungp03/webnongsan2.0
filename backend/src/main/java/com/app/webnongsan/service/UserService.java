@@ -114,5 +114,9 @@ public class UserService {
         u.setAvatarUrl(user.getAvatarUrl());
         return u;
     }
+
+    public User getUserByUsername(String username) {
+        return this.userRepository.findByEmail(username);
+    }
 }
 
