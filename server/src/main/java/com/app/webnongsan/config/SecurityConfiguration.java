@@ -43,7 +43,8 @@ public class SecurityConfiguration {
         String[] whiteList = {
                 "/", "/api/v2/auth/login",
                 "/api/v2/auth/refresh",
-                "/api/v2/auth/register"
+                "/api/v2/auth/register",
+                "/storage/**"
         };
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())

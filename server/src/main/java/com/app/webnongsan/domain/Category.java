@@ -1,6 +1,7 @@
 package com.app.webnongsan.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class Category {
     private long id;
 
     @Column(nullable = false)
+    @NotBlank(message = "Không để trống tên danh mục")
     private String name;
 
     private String imageUrl;

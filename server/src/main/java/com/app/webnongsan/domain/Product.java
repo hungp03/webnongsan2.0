@@ -1,5 +1,6 @@
 package com.app.webnongsan.domain;
 
+import com.app.webnongsan.util.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
@@ -29,7 +30,13 @@ public class Product {
 
     private int quantity;
 
-    private Instant postingDate;
+    private Instant createdAt;
+
+    private String createdBy;
+
+    private Instant updatedAt;
+
+    private String updatedBy;
 
     private String unit;
 
@@ -42,4 +49,16 @@ public class Product {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<Feedback> feedbacks;
+
+    @PrePersist
+    public void handleBeforeCreate() {
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    public void handleBeforeUpdate(){
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        this.updatedAt = Instant.now();
+    }
 }

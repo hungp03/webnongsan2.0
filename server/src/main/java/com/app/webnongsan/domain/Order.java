@@ -17,7 +17,6 @@ public class Order {
 
     private Instant orderTime;
 
-
     private Instant deliveryTime;
 
     private int status;
@@ -31,4 +30,9 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PrePersist
+    public void handleBeforeCreate() {
+        this.orderTime = Instant.now();
+    }
 }

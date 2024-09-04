@@ -26,5 +26,10 @@ public class Cart {
 
     private int quantity;
 
-    private Instant addedTime;
+    private Instant timestamp;
+
+    @PrePersist
+    public void handleAddToCart() {
+        this.timestamp = Instant.now();
+    }
 }

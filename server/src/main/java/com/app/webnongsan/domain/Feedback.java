@@ -23,7 +23,7 @@ public class Feedback {
     @Column(nullable = false)
     private int status;
 
-    private Instant postingDate;
+    private Instant timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -32,4 +32,9 @@ public class Feedback {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @PrePersist
+    public void handleCreateFeedback() {
+        this.timestamp = Instant.now();
+    }
 }
