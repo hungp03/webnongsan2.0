@@ -1,5 +1,6 @@
 package com.app.webnongsan.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -23,5 +24,6 @@ public class Category {
     private String imageUrl;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    @JsonIgnore
     private List<Product> products;
 }
