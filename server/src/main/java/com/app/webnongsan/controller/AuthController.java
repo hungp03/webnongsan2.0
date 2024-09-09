@@ -163,7 +163,7 @@ public class AuthController {
 
     @PostMapping("auth/register")
     @ApiMessage("Register a user")
-    public ResponseEntity<CreateUserDTO> resgister(@Valid @RequestBody User user) throws IdInvalidException {
+    public ResponseEntity<CreateUserDTO> register(@Valid @RequestBody User user) throws IdInvalidException {
         if (this.userService.isExistedEmail(user.getEmail())){
             throw new IdInvalidException("Email " + user.getEmail() + " đã tồn tại");
         }

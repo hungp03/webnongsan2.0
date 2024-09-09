@@ -1,11 +1,13 @@
 package com.app.webnongsan.domain;
 
 import com.app.webnongsan.util.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,10 +47,21 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @NotNull(message = "Category không được để trống")
+    @JsonBackReference
     private Category category;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonIgnore
     private List<Feedback> feedbacks;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonIgnore
+    private List<OrderDetail> orderDetails;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonIgnore
+    private List<Wishlist> wishlist;
 
     @PrePersist
     public void handleBeforeCreate() {
