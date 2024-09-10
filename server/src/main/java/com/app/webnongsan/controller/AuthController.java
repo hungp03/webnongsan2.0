@@ -7,9 +7,8 @@ import com.app.webnongsan.domain.response.user.ResLoginDTO;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
 import com.app.webnongsan.util.annotation.ApiMessage;
-import com.app.webnongsan.util.exception.IdInvalidException;
+import com.app.webnongsan.util.exception.ResourceInvalidException;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -88,9 +87,9 @@ public class AuthController {
 
     @GetMapping("auth/refresh")
     @ApiMessage("Get new refresh token")
-    public ResponseEntity<ResLoginDTO> getNewRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "none") String refreshToken) throws IdInvalidException {
+    public ResponseEntity<ResLoginDTO> getNewRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "none") String refreshToken) throws ResourceInvalidException {
         if (refreshToken.equals("none")) {
-            throw new IdInvalidException("Vui lòng đăng nhập");
+            throw new ResourceInvalidException("Vui lòng đăng nhập");
         }
 
         // Check RFtoken hợp lệ
@@ -98,7 +97,7 @@ public class AuthController {
         String email = decodedToken.getSubject();
         User currentUser = this.userService.getUserByRFTokenAndEmail(email, refreshToken);
         if (currentUser == null) {
-            throw new IdInvalidException("Refresh token không hợp lệ");
+            throw new ResourceInvalidException("Refresh token không hợp lệ");
         }
 
         // Tạo lại RF token và set cookies
@@ -139,10 +138,10 @@ public class AuthController {
 
     @PostMapping("auth/logout")
     @ApiMessage("Logout")
-    public ResponseEntity<Void> logout() throws IdInvalidException {
+    public ResponseEntity<Void> logout() throws ResourceInvalidException {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         if (email.isEmpty()) {
-            throw new IdInvalidException("Accesstoken không hợp lệ");
+            throw new ResourceInvalidException("Accesstoken không hợp lệ");
         }
 
         // Update RFtoken = null
@@ -163,9 +162,9 @@ public class AuthController {
 
     @PostMapping("auth/register")
     @ApiMessage("Register a user")
-    public ResponseEntity<CreateUserDTO> register(@Valid @RequestBody User user) throws IdInvalidException {
+    public ResponseEntity<CreateUserDTO> register(@Valid @RequestBody User user) throws ResourceInvalidException {
         if (this.userService.isExistedEmail(user.getEmail())){
-            throw new IdInvalidException("Email " + user.getEmail() + " đã tồn tại");
+            throw new ResourceInvalidException("Email " + user.getEmail() + " đã tồn tại");
         }
 
         User newUser = this.userService.create(user);

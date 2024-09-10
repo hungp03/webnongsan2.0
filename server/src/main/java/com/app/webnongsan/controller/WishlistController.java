@@ -4,7 +4,7 @@ import com.app.webnongsan.domain.Wishlist;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.service.WishlistService;
 import com.app.webnongsan.util.annotation.ApiMessage;
-import com.app.webnongsan.util.exception.IdInvalidException;
+import com.app.webnongsan.util.exception.ResourceInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,20 +21,20 @@ public class WishlistController {
 
     @PostMapping("wishlist")
     @ApiMessage("Add wishlist")
-    public ResponseEntity<Wishlist> add(@RequestBody Wishlist w) throws IdInvalidException {
+    public ResponseEntity<Wishlist> add(@RequestBody Wishlist w) throws ResourceInvalidException {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.wishlistService.addWishlist(w));
     }
 
     @DeleteMapping("wishlist/{productId}")
     @ApiMessage("Delete wishlist")
-    public ResponseEntity<Void> delete(@PathVariable Long productId) throws IdInvalidException {
+    public ResponseEntity<Void> delete(@PathVariable Long productId) throws ResourceInvalidException {
         this.wishlistService.deleteWishlist(productId);
         return ResponseEntity.ok(null);
     }
 
     @GetMapping("wishlist")
     @ApiMessage("Get list wishlist")
-    public ResponseEntity<PaginationDTO> getAll(@Filter Specification<Wishlist> spec,  Pageable pageable) throws IdInvalidException {
-        return ResponseEntity.ok(this.wishlistService.getWishlistsByCurrentUser(spec, pageable));
+    public ResponseEntity<PaginationDTO> getAll(Pageable pageable) throws ResourceInvalidException {
+        return ResponseEntity.ok(this.wishlistService.getWishlistsByCurrentUser(pageable));
     }
 }

@@ -5,16 +5,16 @@ import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.Wishlist;
 import com.app.webnongsan.domain.WishlistId;
 import com.app.webnongsan.domain.response.PaginationDTO;
+import com.app.webnongsan.domain.response.wishlist.WishlistItemDTO;
 import com.app.webnongsan.repository.ProductRepository;
 import com.app.webnongsan.repository.UserRepository;
 import com.app.webnongsan.repository.WishlistRepository;
 import com.app.webnongsan.util.PaginationHelper;
 import com.app.webnongsan.util.SecurityUtil;
-import com.app.webnongsan.util.exception.IdInvalidException;
+import com.app.webnongsan.util.exception.ResourceInvalidException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import com.turkraft.springfilter.boot.Filter;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,18 +25,18 @@ public class WishlistService {
     private final ProductRepository productRepository;
     private final PaginationHelper paginationHelper;
 
-    public Wishlist addWishlist(Wishlist w) throws IdInvalidException {
+    public Wishlist addWishlist(Wishlist w) throws ResourceInvalidException {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         User u = this.userRepository.findByEmail(email);
-        if (u == null){
-            throw new IdInvalidException("User không tồn tại");
+        if (u == null) {
+            throw new ResourceInvalidException("User không tồn tại");
         }
-        Product p = this.productRepository.findById(w.getId().getProductId()).orElseThrow(()-> new IdInvalidException("Product không tồn tại"));
+        Product p = this.productRepository.findById(w.getId().getProductId()).orElseThrow(() -> new ResourceInvalidException("Product không tồn tại"));
 
         boolean exists = wishlistRepository.existsByUserIdAndProductId(u.getId(), p.getId());
 
         if (exists) {
-            throw new IdInvalidException("Sản phẩm đã có trong danh sách yêu thích");
+            throw new ResourceInvalidException("Sản phẩm đã có trong danh sách yêu thích");
         }
 
         w.setUser(u);
@@ -44,33 +44,32 @@ public class WishlistService {
         return this.wishlistRepository.save(w);
     }
 
-    public void deleteWishlist(Long productId) throws IdInvalidException {
+    public void deleteWishlist(Long productId) throws ResourceInvalidException {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         User user = this.userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new IdInvalidException("User không tồn tại");
+            throw new ResourceInvalidException("User không tồn tại");
         }
 
         boolean exists = wishlistRepository.existsByUserIdAndProductId(user.getId(), productId);
         if (!exists) {
-            throw new IdInvalidException("Sản phẩm không tồn tại trong danh sách yêu thích");
+            throw new ResourceInvalidException("Sản phẩm không tồn tại trong danh sách yêu thích");
         }
 
         WishlistId wishlistId = new WishlistId(user.getId(), productId);
         wishlistRepository.deleteById(wishlistId);
     }
 
-    public PaginationDTO getWishlistsByCurrentUser(Specification<Wishlist> specification, Pageable pageable) throws IdInvalidException {
+    public PaginationDTO getWishlistsByCurrentUser( Pageable pageable) throws ResourceInvalidException {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         User user = this.userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new IdInvalidException("User không tồn tại");
+            throw new ResourceInvalidException("User không tồn tại");
         }
 
-        specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("user").get("id"), user.getId()));
-
-        return this.paginationHelper.fetchAllEntities(specification, pageable, wishlistRepository);
+        Page<WishlistItemDTO> wishlistItems = this.wishlistRepository.findWishlistItemsByUserId(user.getId(), pageable);
+        return this.paginationHelper.fetchAllEntities(wishlistItems);
     }
 }

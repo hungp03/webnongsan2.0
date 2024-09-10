@@ -5,7 +5,7 @@ import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.repository.CategoryRepository;
 import com.app.webnongsan.repository.ProductRepository;
 import com.app.webnongsan.util.PaginationHelper;
-import com.app.webnongsan.util.exception.IdInvalidException;
+import com.app.webnongsan.util.exception.ResourceInvalidException;
 import lombok.AllArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -44,9 +44,9 @@ public class CategoryService {
         return categoryRepository.save(curr);
     }
 
-    public void delete(long id) throws IdInvalidException {
+    public void delete(long id) throws ResourceInvalidException {
         if (productRepository.existsByCategoryId(id)) {
-            throw new IdInvalidException("Không thể xóa vì category có sản phẩm liên quan.");
+            throw new ResourceInvalidException("Không thể xóa vì category có sản phẩm liên quan.");
         }
         categoryRepository.deleteById(id);
     }

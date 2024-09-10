@@ -4,7 +4,7 @@ import com.app.webnongsan.domain.Product;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.service.ProductService;
 import com.app.webnongsan.util.annotation.ApiMessage;
-import com.app.webnongsan.util.exception.IdInvalidException;
+import com.app.webnongsan.util.exception.ResourceInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,27 +22,27 @@ public class ProductController {
 
     @PostMapping("products")
     @ApiMessage("Create product")
-    public ResponseEntity<Product> create(@Valid @RequestBody Product p) throws IdInvalidException {
+    public ResponseEntity<Product> create(@Valid @RequestBody Product p) throws ResourceInvalidException {
         if (!this.productService.checkValidCategoryId(p.getCategory().getId())){
-            throw new IdInvalidException("Category không tồn tại");
+            throw new ResourceInvalidException("Category không tồn tại");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(this.productService.create(p));
     }
 
     @GetMapping("products/{id}")
     @ApiMessage("Create product")
-    public ResponseEntity<Product> get(@PathVariable("id") long id) throws IdInvalidException {
+    public ResponseEntity<Product> get(@PathVariable("id") long id) throws ResourceInvalidException {
         if (!this.productService.checkValidProductId(id)){
-            throw new IdInvalidException("Product id = " + id + " không tồn tại");
+            throw new ResourceInvalidException("Product id = " + id + " không tồn tại");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(this.productService.get(id));
     }
 
     @DeleteMapping("products/{id}")
     @ApiMessage("Delete product")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) throws IdInvalidException {
+    public ResponseEntity<Void> delete(@PathVariable("id") long id) throws ResourceInvalidException {
         if (!this.productService.checkValidProductId(id)){
-            throw new IdInvalidException("Product id = " + id + " không tồn tại");
+            throw new ResourceInvalidException("Product id = " + id + " không tồn tại");
         }
         this.productService.delete(id);
         return ResponseEntity.ok(null);
@@ -56,10 +56,10 @@ public class ProductController {
 
     @PutMapping("products")
     @ApiMessage("Update product")
-    public ResponseEntity<Product> update(@Valid @RequestBody Product p) throws IdInvalidException {
+    public ResponseEntity<Product> update(@Valid @RequestBody Product p) throws ResourceInvalidException {
         boolean check = this.productService.checkValidProductId(p.getId());
         if (!check){
-            throw new IdInvalidException("Product id = " + p.getId() + " không tồn tại");
+            throw new ResourceInvalidException("Product id = " + p.getId() + " không tồn tại");
         }
         return ResponseEntity.ok(this.productService.update(p));
     }
