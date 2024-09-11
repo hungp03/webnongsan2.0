@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -123,4 +124,25 @@ public class SecurityUtil {
         }
     }
 
+    public static long getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+
+            Object userClaimObj = jwt.getClaims().get("user");
+
+            if (userClaimObj instanceof Map<?, ?> userClaim) {
+                Object idObj = userClaim.get("id");
+                if (idObj instanceof Number) {
+                    return ((Number) idObj).longValue();
+                } else {
+                    throw new IllegalArgumentException("User ID is not of type Number");
+                }
+            } else {
+                throw new IllegalArgumentException("User claim is not of type Map");
+            }
+        }
+
+        throw new IllegalArgumentException("User ID not found or invalid token");
+    }
 }

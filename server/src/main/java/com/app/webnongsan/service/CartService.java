@@ -3,7 +3,6 @@ package com.app.webnongsan.service;
 import com.app.webnongsan.domain.*;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.cart.CartItemDTO;
-import com.app.webnongsan.domain.response.wishlist.WishlistItemDTO;
 import com.app.webnongsan.repository.CartRepository;
 import com.app.webnongsan.repository.ProductRepository;
 import com.app.webnongsan.repository.UserRepository;
@@ -14,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -66,4 +67,26 @@ public class CartService {
         Page<CartItemDTO> cartItems = this.cartRepository.findCartItemsByUserId(user.getId(), pageable);
         return this.paginationHelper.fetchAllEntities(cartItems);
     }
+
+    public Cart updateProductQuantity(long productId, int newQuantity) throws ResourceInvalidException {
+        long userId = SecurityUtil.getUserId();
+        CartId cartId = new CartId(userId, productId);
+        Optional<Cart> optionalCart = cartRepository.findById(cartId);
+
+        if (optionalCart.isPresent()) {
+            Cart cart = optionalCart.get();
+            Product product = this.productRepository.findById(productId)
+                    .orElseThrow(() -> new ResourceInvalidException("Product không tồn tại"));
+
+            if (newQuantity > product.getQuantity()) {
+                throw new ResourceInvalidException("Số lượng hàng không đủ");
+            }
+
+            cart.setQuantity(newQuantity);
+            return cartRepository.save(cart);
+        } else {
+            throw new ResourceInvalidException("Sản phẩm không tồn tại trong giỏ hàng");
+        }
+    }
+
 }
