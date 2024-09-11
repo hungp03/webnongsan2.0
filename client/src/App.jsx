@@ -1,13 +1,13 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import MainContent from './components/MainContent';
+import { Header, Navbar, MainBanner} from './components';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
+      <Header />
       <Navbar />
-      <MainContent />
+      <MainBanner />
     </div>
   );
 }
