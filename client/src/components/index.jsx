@@ -1,5 +1,4 @@
 export { default as Header } from "./Header";
-export { default as Loading } from "./Loading";
-export {default as HeaderButton} from './HeaderButton'
-export { default as MainBanner } from "./MainBanner";
-export {default as Navbar} from './Navbar'
+export { default as Navigation } from "./Navigation";
+export { default as Banner } from "./Banner";
+export { default as Sidebar } from "./Sidebar";

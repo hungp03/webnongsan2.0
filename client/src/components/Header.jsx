@@ -1,57 +1,47 @@
-import React, { useState } from 'react';
-import {Loading, HeaderButton} from './index';
-import {Search, Menu } from 'lucide-react';
-import './css/Header.css'
+import React from "react";
+import logo from "../assets/logo.png";
+import icons from "../utils/icons";
+import { Link } from "react-router-dom";
+import path from "../utils/path";
+
+const { FaPhone, MdEmail, FaUserCircle, FaCartShopping } = icons;
 
 const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+  return (
+    <div className="flex justify-between w-main h-[110px] py-[35px]">
+      
+      <Link to={`/${path.HOME}`}>
+        <img src={logo} alt="logo" className="w-[120px] object-contain" />
+      </Link>
 
-    const handleLogin = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoggedIn(true);
-            setIsLoading(false);
-        }, 500);
-    };
+      <div className="flex text-[13px]">
+        <div className="flex flex-col items-center px-5 border-r">
+          <span className="flex gap-4 items-center">
+            <FaPhone color="#10B981" />
+            <span className="font-medium">(+84) 123456789 </span>
+          </span>
+          <span>Mon-Sat 9:00AM - 8:00PM</span>
+        </div>
 
-    return (
-        <>
-            <Loading loading={isLoading} />
-            <header className="header-background text-white">
-                <nav className="navbar navbar-expand-lg navbar-dark">
-                    <div className="container">
-                        <a className="navbar-brand d-none d-lg-flex align-items-center" href="#">
-                            <img src="/logo.png" alt="Logo" className="me-2" width="50" height="50" />
-                        </a>
+        <div className="flex flex-col items-center px-5 border-r">
+          <span className="flex gap-4 items-center">
+            <MdEmail color="#10B981" />
+            <span className="font-medium">support@gmail.com</span>
+          </span>
+          <span>Online Support 24/7</span>
+        </div>
 
-                        <div className="search-container d-flex flex-grow-1 mx-2 mx-lg-4 order-1">
-                            <div className="input-group" style={{ maxWidth: '400px' }}>
-                                <input type="text" className="form-control" placeholder="Tìm kiếm..." aria-label="Search" />
-                                <button className="btn btn-light" type="button">
-                                    <Search size={20} />
-                                </button>
-                            </div>
-                        </div>
+        <div className="cursor-pointer hover:underline flex items-center justify-center gap-2 px-5 border-r">
+          <FaCartShopping color="#10B981" size={25} />
+          <span>0 item(s)</span>
+        </div>
 
-                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <Menu size={24} />
-                        </button>
-
-                        <div className="collapse navbar-collapse" id="navbarContent">
-                            <div className="navbar-nav d-lg-none mt-3">
-                                <HeaderButton isLoading={isLoading} handleLogin={handleLogin} isLoggedIn={isLoggedIn} />
-                            </div>
-                        </div>
-
-                        <div className="d-none d-lg-flex order-2">
-                            <HeaderButton isLoading={isLoading} handleLogin={handleLogin} isLoggedIn={isLoggedIn} />
-                        </div>
-                    </div>
-                </nav>
-            </header>
-        </>
-    );
+        <div className="cursor-pointer hover:underline flex items-center justify-center px-5 gap-2">
+          <FaUserCircle color="#10B981" size={25} />
+          <span>Profile</span>
+        </div>
+      </div>
+    </div>
+  );
 };
-
 export default Header;
