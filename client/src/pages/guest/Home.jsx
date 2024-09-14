@@ -2,6 +2,7 @@ import React from 'react'
 import {
     Banner,
     Sidebar,
+    FeatureProduct
 } from "../../components";
 const Home = () => {
     return (
@@ -13,6 +14,9 @@ const Home = () => {
                 <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto">
                     <Banner />
                 </div>
+            </div>
+            <div className="my-8">
+                <FeatureProduct />
             </div>
         </>
 

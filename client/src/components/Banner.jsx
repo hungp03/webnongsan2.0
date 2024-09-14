@@ -10,10 +10,10 @@ const Banner = () => {
             />
 
             <div className="absolute inset-0 flex flex-col justify-center items-start ml-8">
-                <h1 className="text-3xl font-semibold mb-4 text-">Welcome to Ogani</h1>
-                <p className="text-main mb-4">See Our latest products from here</p>
+                <h1 className="text-3xl font-semibold mb-4 text-">Chào mừng bạn đến với Ogani</h1>
+                <p className="text-main mb-4">Xem ngay những sản phẩm dành cho bạn</p>
                 <button className="bg-main font-bold py-2 px-4 rounded text-gray-50">
-                    Shop now
+                    Mua ngay
                 </button>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import { Header, Navigation } from '../../components'
+import { Header, Navigation, Footer } from '../../components'
 const Public = () => {
     return (
         <div className='w-full flex flex-col items-center'>Public
@@ -9,6 +9,7 @@ const Public = () => {
             <div className="w-full flex flex-col items-center">
                 <Outlet />
             </div>
+            <Footer/>
         </div>
 
     )

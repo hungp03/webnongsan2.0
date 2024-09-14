@@ -17,12 +17,12 @@ const Header = () => {
       <div className="ml-auto flex">
         <div className="cursor-pointer hover:underline flex items-center justify-center gap-2 px-5 border-r">
           <FaCartShopping color="#10B981" size={25} />
-          <span>0 item(s)</span>
+          <span>0 sản phẩm</span>
         </div>
 
         <div className="cursor-pointer hover:underline flex items-center justify-center px-5 gap-2">
           <FaUserCircle color="#10B981" size={25} />
-          <span>Profile</span>
+          <span>Tài khoản</span>
         </div>
       </div>
     </div>

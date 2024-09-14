@@ -3,12 +3,12 @@ import path from "./path";
 export const navigation = [
   {
     id: 1,
-    value: "HOME",
+    value: "Trang chủ",
     path: `/${path.HOME}`,
   },
   {
     id: 2,
-    value: "PRODUCTS",
+    value: "Sản phẩm",
     path: `/${path.PRODUCTS}`,
   },
   {
