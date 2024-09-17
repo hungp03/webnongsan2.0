@@ -1,7 +1,12 @@
 package com.app.webnongsan.domain.response.product;
 
 import com.app.webnongsan.domain.Category;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ResProductDTO {
     private long id;
 
@@ -15,8 +20,11 @@ public class ResProductDTO {
 
     private String unit;
 
+    private int sold;
+
+    private double rating;
+
     private String description;
 
-    private Category category;
-
+    private String category;
 }

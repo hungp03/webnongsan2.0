@@ -40,12 +40,12 @@ public class AuthController {
     @PostMapping("auth/login")
     @ApiMessage("Login")
     public ResponseEntity<ResLoginDTO> login(@RequestBody LoginDTO loginDTO) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         ResLoginDTO res = new ResLoginDTO();
 
-        User currentUserDB = this.userService.getUserByUsername(loginDTO.getUsername());
+        User currentUserDB = this.userService.getUserByUsername(loginDTO.getEmail());
         if (currentUserDB != null) {
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUserDB.getId(), currentUserDB.getEmail(), currentUserDB.getName(), currentUserDB.getRole());
             res.setUser(userLogin);
@@ -54,13 +54,14 @@ public class AuthController {
         String accessToken = this.securityUtil.createAccessToken(authentication.getName(), res);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         res.setAccessToken(accessToken);
-        String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getUsername(), res);
-        this.userService.updateUserToken(refresh_token, loginDTO.getUsername());
+        String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getEmail(), res);
+        this.userService.updateUserToken(refresh_token, loginDTO.getEmail());
         ResponseCookie responseCookie = ResponseCookie.from("refresh_token", refresh_token)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 .maxAge(refreshTokenExpiration)
+                .sameSite("Lax")
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(res);

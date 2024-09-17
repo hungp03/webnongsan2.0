@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import path from './utils/path'
 import { Route, Routes } from "react-router-dom";
-import { Login, Home, Public} from "./pages/guest";
+import { Login, Home, Public, ProductDetail, ForYou, Product} from "./pages/guest";
 import { useDispatch } from "react-redux";
 import { getCategories } from "./store/app/asyncActions";
 
@@ -17,8 +17,12 @@ const App = () => {
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />}></Route>
+          <Route path={path.PRODUCTS} element={<Product />}></Route>
+          <Route path={path.FOR_YOU} element={<ForYou/>}></Route>
+          <Route path={path.PRODUCT_DETAIL} element={<ProductDetail />}></Route>
         </Route>
         <Route path={path.LOGIN} element={<Login />}></Route>
+
       </Routes>
     </div>
   );

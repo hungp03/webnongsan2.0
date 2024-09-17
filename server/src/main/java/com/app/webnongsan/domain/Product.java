@@ -32,6 +32,10 @@ public class Product {
 
     private int quantity;
 
+    private double rating;
+
+    private int sold;
+
     private Instant createdAt;
 
     private String createdBy;

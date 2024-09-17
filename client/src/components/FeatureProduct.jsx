@@ -5,7 +5,7 @@ const FeatureProduct = () => {
   const [products, setProducts] = useState(null);
 
   const fetchProduct = async () => {
-    const response = await apiGetProducts({ page: 1, size: 6 });
+    const response = await apiGetProducts({ page: 1, size: 6, sort: 'rating,desc'});
     if (response.statusCode === 200) {
       setProducts(response.data.result)
     }
@@ -14,6 +14,7 @@ const FeatureProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
+
 
   return (
     <div className="w-main">

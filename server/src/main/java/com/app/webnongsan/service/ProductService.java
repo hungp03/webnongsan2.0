@@ -1,15 +1,21 @@
 package com.app.webnongsan.service;
 
 import com.app.webnongsan.domain.Product;
+import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.product.ResProductDTO;
+import com.app.webnongsan.domain.response.user.UserDTO;
 import com.app.webnongsan.repository.CategoryRepository;
 import com.app.webnongsan.repository.ProductRepository;
 import com.app.webnongsan.util.PaginationHelper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,7 +46,36 @@ public class ProductService{
     }
 
     public PaginationDTO getAll(Specification<Product> spec, Pageable pageable){
-        return this.paginationHelper.fetchAllEntities(spec, pageable, productRepository);
+        Page<Product> productPage = this.productRepository.findAll(spec, pageable);
+
+        PaginationDTO p = new PaginationDTO();
+        PaginationDTO.Meta meta = new PaginationDTO.Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(productPage.getTotalPages());
+        meta.setTotal(productPage.getTotalElements());
+
+        p.setMeta(meta);
+
+        List<ResProductDTO> listProducts = productPage.getContent().stream().map(this::convertToProductDTO).toList();
+        p.setResult(listProducts);
+        return p;
+    }
+
+    public ResProductDTO convertToProductDTO(Product p) {
+        ResProductDTO res = new ResProductDTO();
+        res.setId(p.getId());
+        res.setProduct_name(p.getProduct_name());
+        res.setCategory(p.getCategory().getName());
+        res.setPrice(p.getPrice());
+        res.setSold(p.getSold());
+        res.setQuantity(p.getQuantity());
+        res.setImageUrl(p.getImageUrl());
+        res.setUnit(p.getUnit());
+        res.setDescription(p.getDescription());
+        res.setRating(p.getRating());
+        return res;
     }
 
     public Product findById(long id){
