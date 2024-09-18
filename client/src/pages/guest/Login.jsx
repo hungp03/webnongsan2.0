@@ -25,26 +25,27 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-
-  //const [token, setToken] = useState("")
   const onSubmit = useCallback(async () => {
     setLoading(true);
     const { name, ...data } = payload;
     if (isRegister) {
       const res = await apiRegister(payload);
+      console.log(res)
       setLoading(false);
-      if (res.success) {
-        // Swal.fire(
-        //   'Congratulation', res.message, 'success'
-        // ).then(() => {
-        //   setisRegister(false)
-        // })
+      if (res.statusCode === 201) {
+        Swal.fire(
+          'Congratulation', "Đăng ký thành công", 'success'
+        ).then(() => {
+          setisRegister(false)
+        })
       }
-      else
-        return Swal.fire(
-          'Oops!', res.message, 'error'
+      else {
+        setLoading(false)
+        Swal.fire(
+          'Oops!', result.message, 'error'
         )
-      //console.log(payload)
+      }
+
     }
     else {
       const result = await apiLogin(data)
@@ -56,10 +57,13 @@ const Login = () => {
         }, 1000)
 
       }
-      else
+      else {
+        setLoading(false)
         Swal.fire(
           'Oops!', result.message, 'error'
         )
+      }
+
     }
   }, [payload, isRegister, dispatch, navigate]);
 
@@ -90,7 +94,13 @@ const Login = () => {
                     nameKey="name"
                     register={formRegister}
                     errors={errors}
-                    validationRules={{ required: 'Tên không được bỏ trống' }}
+                    validationRules={{
+                      required: 'Tên không được bỏ trống',
+                      pattern: {
+                        value: /^[a-zA-ZÀ-ỹ\s]+$/,
+                        message: 'Tên chỉ được chứa các ký tự chữ cái và khoảng trắng'
+                      }
+                    }}
                   />
                 </div>
               )}

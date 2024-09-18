@@ -45,6 +45,7 @@ public class SecurityConfiguration {
                 "/api/v2/auth/register",
                 "/api/v2/auth/forgot",
                 "/api/v2/auth/reset-password",
+                "/api/v2/auth/validate-token",
                 "/storage/**",
         };
         http.csrf(AbstractHttpConfigurer::disable)

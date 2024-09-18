@@ -104,7 +104,7 @@ public class SecurityUtil {
 
     public String createResetPasswordToken(String email, String uuid) {
         Instant now = Instant.now();
-        Instant validity = now.plus(5*60, ChronoUnit.SECONDS); // 5 phút
+        Instant validity = now.plus(5, ChronoUnit.MINUTES); // 5 phút
 
         // Tạo claims bổ sung cho reset password token
         Map<String, Object> additionalClaims = new HashMap<>();

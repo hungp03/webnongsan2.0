@@ -39,3 +39,19 @@ export const apiResetPassword = async (newPassword, token) =>
             newPassword: newPassword
         }
     });
+
+export const apiValidateToken = async (token) =>
+    axiosInstance({
+        url: "/auth/validate-token",
+        method: 'get',
+        params: {
+            token: token
+        }
+    });
+
+export const apiLogout = async () =>
+    axiosInstance({
+        url: "/auth/logout",
+        method: 'post',
+        withCredentials: true,
+    });

@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -200,5 +201,17 @@ public class AuthController {
         String email = decodedToken.getClaim("email");
         this.userService.resetPassword(email, request.getNewPassword());
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("auth/validate-token")
+    @ApiMessage("validate token")
+    public ResponseEntity<Map<String, Boolean>> validateToken(@RequestParam("token") String token) {
+        try {
+            Jwt decodedToken = securityUtil.checkValidToken(token);
+            // Check if the token is valid and not expired
+            return ResponseEntity.ok(Map.of("valid", decodedToken != null));
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("valid", false));
+        }
     }
 }

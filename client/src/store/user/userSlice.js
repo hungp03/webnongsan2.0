@@ -19,6 +19,7 @@ export const userSlice = createSlice({
             //console.log(action)
             state.isLoggedIn = false
             state.token = null
+            state.current = null
         }
     },
     extraReducers: (builder) => {
