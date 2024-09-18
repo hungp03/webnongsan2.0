@@ -13,6 +13,7 @@ export const apiLogin = async (data) =>
         url: "/auth/login",
         method: "post",
         data,
+        withCredentials: true
     });
 
 export const apiGetCurrentUser = async () =>
