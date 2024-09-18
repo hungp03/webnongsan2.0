@@ -1,23 +1,27 @@
 import React from 'react'
 import { Button } from '../../components'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { apiResetPassword } from '../../apis';
 import { toast } from "react-toastify";
 import { useForm } from 'react-hook-form';
+import path from '../../utils/path';
 
 const ResetPassword = () => {
     const location = useLocation();
+    const navigate = useNavigate()
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get('token');
     const { register, handleSubmit, formState: { errors } } = useForm();
     const handleResetPassword = async (data) => {
         const response = await apiResetPassword(data.password, token)
-        console.log(response)
-        if (!response.success) {
-            toast.info(response.message)
+        //console.log(response)
+        if (response.statusCode !== 200) {
+            toast.info("Có lỗi xảy ra, hãy thử lại sau")
+            navigate(`/${path.LOGIN}`);
         }
         else {
-            toast.success(response.message)
+            toast.success("Đổi mật khẩu thành công")
+            navigate(`/${path.LOGIN}`);
         }
     }
     return (
@@ -40,8 +44,8 @@ const ResetPassword = () => {
                 {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
                 <div className="flex items-center justify-end w-full">
                     <span
-                        className="w-full text-gray-700 hover:text-blue-700 hover:underline cursor-pointer">Cancel</span>
-                    <Button handleOnClick={handleSubmit(handleResetPassword)} >Xác nhận</Button>
+                        className="w-full text-gray-700 hover:text-blue-700 hover:underline cursor-pointer" onClick={() => navigate(`/${path.HOME}`)}>Cancel</span>
+                    <Button handleOnClick={handleSubmit(handleResetPassword)} fw={true}>Xác nhận</Button>
                 </div>
             </div>
         </div>
