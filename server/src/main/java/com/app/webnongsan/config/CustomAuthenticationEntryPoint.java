@@ -33,8 +33,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         String errorMessage = Optional.ofNullable(authException.getCause()).map(Throwable::getMessage).orElse(authException.getMessage());
         res.setError(errorMessage);
-        res.setMessage("Token không hợp lệ (hết hạn, không đúng định dạng, hoặc không truyền token ở header)...");
-
+        res.setMessage("Token không hợp lệ");
         mapper.writeValue(response.getWriter(), res);
     }
 }

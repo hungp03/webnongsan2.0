@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { InputField, Button } from "../../components";
+import { InputField, Button, ForgotPassword } from "../../components";
 import Swal from 'sweetalert2'
 import { apiLogin, apiRegister } from "../../apis";
 import { useNavigate, Link } from "react-router-dom";
@@ -20,17 +20,11 @@ const Login = () => {
   });
 
   const [isRegister, setisRegister] = useState(false)
+  const [isForgotPass, setIsForgotPass] = useState(false)
   const { register: formRegister, handleSubmit, formState: { errors } } = useForm();
 
   const [loading, setLoading] = useState(false);
 
-  // const resetPayload = () => {
-  //   setPayload({
-  //     email: "",
-  //     password: "",
-  //     name: "",
-  //   })
-  // }
 
   //const [token, setToken] = useState("")
   const onSubmit = useCallback(async () => {
@@ -44,7 +38,6 @@ const Login = () => {
         //   'Congratulation', res.message, 'success'
         // ).then(() => {
         //   setisRegister(false)
-        //   resetPayload()
         // })
       }
       else
@@ -72,6 +65,7 @@ const Login = () => {
 
   return (
     <div className="w-full h-screen relative">
+      {isForgotPass && <ForgotPassword onClose={() => setIsForgotPass(false)} />}
       <img
         src="https://marketplace.canva.com/EAE-oux8hGI/1/0/1600w/canva-green-aesthetic-abstract-shape-desktop-wallpaper-5YYLds0aPrE.jpg"
         className="w-full h-full object-cover"

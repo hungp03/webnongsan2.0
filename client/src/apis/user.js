@@ -20,4 +20,22 @@ export const apiGetCurrentUser = async () =>
     axiosInstance({
         url: "/auth/account",
         method: 'get',
-    }); 
+    });
+
+export const apiForgotPassword = async (data) =>
+    axiosInstance({
+        url: "/auth/forgot",
+        method: 'post',
+        data
+    });
+
+export const apiResetPassword = async (newPassword, token) =>
+    axiosInstance({
+        url: "/auth/reset-password",
+        method: 'put',
+        params: {
+            token: token
+        }, data: {
+            newPassword: newPassword
+        }
+    });

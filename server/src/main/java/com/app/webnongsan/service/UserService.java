@@ -6,6 +6,7 @@ import com.app.webnongsan.domain.response.user.CreateUserDTO;
 import com.app.webnongsan.domain.response.user.UpdateUserDTO;
 import com.app.webnongsan.domain.response.user.UserDTO;
 import com.app.webnongsan.repository.UserRepository;
+import com.app.webnongsan.util.exception.ResourceInvalidException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -130,5 +131,18 @@ public class UserService {
     public User getUserByRFTokenAndEmail(String email, String token) {
         return this.userRepository.findByEmailAndRefreshToken(email, token);
     }
+
+    public void resetPassword(String email, String newPassword) throws ResourceInvalidException {
+        User user = getUserByUsername(email);
+
+        if (user == null) {
+            throw new ResourceInvalidException("User with email " + email + " not found");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        this.userRepository.save(user);
+    }
+
 }
 

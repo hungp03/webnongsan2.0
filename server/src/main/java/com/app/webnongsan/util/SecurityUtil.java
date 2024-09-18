@@ -13,12 +13,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.SignatureException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SecurityUtil {
@@ -56,34 +54,36 @@ public class SecurityUtil {
         return null;
     }
 
+    private String createToken(String email, Instant now, Instant validity, Map<String, Object> additionalClaims) {
+        JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder()
+            .issuedAt(now)
+            .expiresAt(validity)
+            .subject(email);
+        additionalClaims.forEach(claimsBuilder::claim);
+
+        JwtClaimsSet claims = claimsBuilder.build();
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
 
     public String createAccessToken(String email, ResLoginDTO resLoginDTO) {
-        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
+        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
         userToken.setId(resLoginDTO.getUser().getId());
         userToken.setEmail(resLoginDTO.getUser().getEmail());
         userToken.setName(resLoginDTO.getUser().getName());
 
-        Instant now = Instant.now();
-        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
+        List<String> listAuthority = Arrays.asList("ROLE_USER_CREATE", "ROLE_USER_UPDATE");
 
-        //Temp
-        List<String> listAuthority = new ArrayList<String>();
-        listAuthority.add("ROLE_USER_CREATE");
-        listAuthority.add("ROLE_USER_UPDATE");
+        // Tạo claims bổ sung cho access token
+        Map<String, Object> additionalClaims = new HashMap<>();
+        additionalClaims.put("user", userToken);
+        additionalClaims.put("permission", listAuthority);
 
-        // @formatter:off
-        // @formatter:off
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuedAt(now)
-                .expiresAt(validity)
-                .subject(email)
-                .claim("user", userToken)
-                .claim("permission", listAuthority)
-                .build();
-        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,
-                claims)).getTokenValue();
+        return createToken(email, now, validity, additionalClaims);
     }
 
     public String createRefreshToken(String email, ResLoginDTO res) {
@@ -95,31 +95,38 @@ public class SecurityUtil {
         userToken.setEmail(res.getUser().getEmail());
         userToken.setName(res.getUser().getName());
 
-        // @formatter:off
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuedAt(now)
-                .expiresAt(validity)
-                .subject(email)
-                .claim("user", userToken)
-                .build();
+        // Tạo claims bổ sung cho refresh token
+        Map<String, Object> additionalClaims = new HashMap<>();
+        additionalClaims.put("user", userToken);
 
-        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,
-                claims)).getTokenValue();
+        return createToken(email, now, validity, additionalClaims);
     }
+
+    public String createResetPasswordToken(String email, String uuid) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(5*60, ChronoUnit.SECONDS); // 5 phút
+
+        // Tạo claims bổ sung cho reset password token
+        Map<String, Object> additionalClaims = new HashMap<>();
+        additionalClaims.put("email", email);
+        additionalClaims.put("token", uuid);
+
+        return createToken(email, now, validity, additionalClaims);
+    }
+
 
     private SecretKey getSecretKey() {
         byte[] keyBytes = Base64.from(jwtKey).decode();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
     }
 
-    public Jwt checkValidRefreshToken(String token){
+    public Jwt checkValidToken(String token){
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
         try {
             return jwtDecoder.decode(token);
         } catch (Exception e) {
-            System.out.println(">>> Refresh token error: " + e.getMessage());
+            System.out.println(">>> Check token error: " + e.getMessage());
             throw e;
         }
     }

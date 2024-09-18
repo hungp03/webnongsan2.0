@@ -1,9 +1,12 @@
 package com.app.webnongsan.controller;
 
 import com.app.webnongsan.domain.User;
+import com.app.webnongsan.domain.request.EmailRequestDTO;
 import com.app.webnongsan.domain.request.LoginDTO;
+import com.app.webnongsan.domain.request.ResetPasswordDTO;
 import com.app.webnongsan.domain.response.user.CreateUserDTO;
 import com.app.webnongsan.domain.response.user.ResLoginDTO;
+import com.app.webnongsan.service.EmailService;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
 import com.app.webnongsan.util.annotation.ApiMessage;
@@ -21,20 +24,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/v2")
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+    private final EmailService emailService;
 
     @Value("${jwt.refreshtoken-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @PostMapping("auth/login")
@@ -94,7 +101,7 @@ public class AuthController {
         }
 
         // Check RFtoken hợp lệ
-        Jwt decodedToken = this.securityUtil.checkValidRefreshToken(refreshToken);
+        Jwt decodedToken = this.securityUtil.checkValidToken(refreshToken);
         String email = decodedToken.getSubject();
         User currentUser = this.userService.getUserByRFTokenAndEmail(email, refreshToken);
         if (currentUser == null) {
@@ -164,11 +171,34 @@ public class AuthController {
     @PostMapping("auth/register")
     @ApiMessage("Register a user")
     public ResponseEntity<CreateUserDTO> register(@Valid @RequestBody User user) throws ResourceInvalidException {
-        if (this.userService.isExistedEmail(user.getEmail())){
+        if (this.userService.isExistedEmail(user.getEmail())) {
             throw new ResourceInvalidException("Email " + user.getEmail() + " đã tồn tại");
         }
 
         User newUser = this.userService.create(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToCreateDTO(newUser));
+    }
+
+    @PostMapping("auth/forgot")
+    @ApiMessage("Forgot password")
+    public ResponseEntity<Void> forgotPassword(@RequestBody EmailRequestDTO emailRequest) throws ResourceInvalidException {
+        if (!this.userService.isExistedEmail(emailRequest.getEmail())) {
+            throw new ResourceInvalidException("Email " + emailRequest.getEmail() + " không tồn tại");
+        }
+        String uuid = String.valueOf(UUID.randomUUID());
+        String token = this.securityUtil.createResetPasswordToken(emailRequest.getEmail(), uuid);
+        this.emailService.sendEmailFromTemplateSync(emailRequest.getEmail(), "Reset password", "forgotPassword", emailRequest.getEmail(), token);
+        return ResponseEntity.ok(null);
+    }
+
+    @PutMapping("auth/reset-password")
+    @ApiMessage("Reset password")
+    public ResponseEntity<Void> resetPassword(
+            @RequestParam("token") String token,
+            @RequestBody ResetPasswordDTO request) throws ResourceInvalidException {
+        Jwt decodedToken = this.securityUtil.checkValidToken(token);
+        String email = decodedToken.getClaim("email");
+        this.userService.resetPassword(email, request.getNewPassword());
+        return ResponseEntity.ok(null);
     }
 }
