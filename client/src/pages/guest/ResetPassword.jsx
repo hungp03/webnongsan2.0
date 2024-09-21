@@ -89,9 +89,9 @@ const ResetPassword = () => {
                             className="w-full text-gray-700 hover:text-blue-700 hover:underline cursor-pointer"
                             onClick={() => navigate(`/${path.HOME}`)}
                         >
-                            Cancel
+                            Hủy bỏ
                         </span>
-                        <Button handleOnClick={handleSubmit(handleResetPassword)} fw={true}>Xác nhận</Button>
+                        <Button handleOnClick={handleSubmit(handleResetPassword)} fw>Xác nhận</Button>
                     </div>
                 </div>
             ) : (

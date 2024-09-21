@@ -17,3 +17,5 @@ export const renderStarFromNumber = (num) => {
     i < num ? <FaStar key={i} color="orange" /> : <FaRegStar key={i} color="orange" />
   );
 };
+
+

@@ -1,7 +1,5 @@
 package com.app.webnongsan.domain.response.product;
 
-import com.app.webnongsan.domain.Category;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +25,5 @@ public class ResProductDTO {
     private String description;
 
     private String category;
+
 }

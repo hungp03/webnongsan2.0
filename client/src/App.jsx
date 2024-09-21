@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import path from './utils/path'
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation} from "react-router-dom";
 import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword} from "./pages/guest";
 import { useDispatch } from "react-redux";
 import { getCategories } from "./store/app/asyncActions";
@@ -9,6 +9,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   useEffect(() => {
     dispatch(getCategories());
@@ -16,7 +20,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen font-main">
-      <Routes>
+      <Routes> 
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />}></Route>
           <Route path={path.PRODUCTS} element={<Product />}></Route>

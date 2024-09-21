@@ -30,12 +30,12 @@ public class ProductController {
     }
 
     @GetMapping("products/{id}")
-    @ApiMessage("Create product")
+    @ApiMessage("Get product")
     public ResponseEntity<Product> get(@PathVariable("id") long id) throws ResourceInvalidException {
         if (!this.productService.checkValidProductId(id)){
             throw new ResourceInvalidException("Product id = " + id + " không tồn tại");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.productService.get(id));
+        return ResponseEntity.ok(this.productService.get(id));
     }
 
     @DeleteMapping("products/{id}")
