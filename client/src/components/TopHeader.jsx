@@ -22,7 +22,7 @@ const TopHeader = () => {
             <div className="w-main flex items-center justify-between text-xs text-white">
                 <span>Liên hệ (+84) 123456789</span>
                 {!isLoggedIn
-                    ? <Link className=" hover:text-gray-700" to={`/${path.LOGIN}`}>Sign in or Create Account</Link>
+                    ? <Link className=" hover:text-gray-700" to={`/${path.LOGIN}`}>Đăng nhập hoặc đăng ký</Link>
                     : <div className="flex items-center gap-2">
                         <span>{`Welcome, ${current?.name}`}</span>
                         <Logout/>

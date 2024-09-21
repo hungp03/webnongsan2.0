@@ -6,6 +6,7 @@ import com.app.webnongsan.domain.request.LoginDTO;
 import com.app.webnongsan.domain.request.ResetPasswordDTO;
 import com.app.webnongsan.domain.response.user.CreateUserDTO;
 import com.app.webnongsan.domain.response.user.ResLoginDTO;
+import com.app.webnongsan.service.AuthService;
 import com.app.webnongsan.service.EmailService;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
@@ -34,15 +35,16 @@ public class AuthController {
     private final SecurityUtil securityUtil;
     private final UserService userService;
     private final EmailService emailService;
-
+    private final AuthService authService;
     @Value("${jwt.refreshtoken-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService, AuthService authService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
         this.emailService = emailService;
+        this.authService = authService;
     }
 
     @PostMapping("auth/login")
@@ -153,7 +155,6 @@ public class AuthController {
             throw new ResourceInvalidException("Accesstoken không hợp lệ");
         }
 
-        // Update RFtoken = null
         this.userService.updateUserToken(null, email);
 
         //Xóa cookie
@@ -188,6 +189,7 @@ public class AuthController {
         }
         String uuid = String.valueOf(UUID.randomUUID());
         String token = this.securityUtil.createResetPasswordToken(emailRequest.getEmail(), uuid);
+        this.authService.storeForgotToken(token, emailRequest.getEmail());
         this.emailService.sendEmailFromTemplateSync(emailRequest.getEmail(), "Reset password", "forgotPassword", emailRequest.getEmail(), token);
         return ResponseEntity.ok(null);
     }
@@ -200,6 +202,7 @@ public class AuthController {
         Jwt decodedToken = this.securityUtil.checkValidToken(token);
         String email = decodedToken.getClaim("email");
         this.userService.resetPassword(email, request.getNewPassword());
+        this.authService.deleteToken(token);
         return ResponseEntity.ok(null);
     }
 
@@ -208,8 +211,9 @@ public class AuthController {
     public ResponseEntity<Map<String, Boolean>> validateToken(@RequestParam("token") String token) {
         try {
             Jwt decodedToken = securityUtil.checkValidToken(token);
-            // Check if the token is valid and not expired
-            return ResponseEntity.ok(Map.of("valid", decodedToken != null));
+            String email = decodedToken.getClaim("email");
+            boolean check = authService.checkValidToken(token, email);
+            return ResponseEntity.ok(Map.of("valid", check));
         } catch (Exception e) {
             return ResponseEntity.ok(Map.of("valid", false));
         }
