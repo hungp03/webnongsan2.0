@@ -44,15 +44,3 @@ export const productExtraInfo = [{
   icon: <FaPhone />
 }
 ]
-
-
-export const productInfosTab = [{
-  id: 1,
-  title: 'Mô tả',
-  content: 'diuahifuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuufhaiouf'
-},
-{
-  id: 2,
-  title: 'Đánh giá',
-}
-]
