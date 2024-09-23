@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetProduct } from '../../apis';
-import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation } from '../../components';
+import { apiGetProduct, apiGetRecommendedProducts } from '../../apis';
+import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, Product } from '../../components';
 import { formatMoney, renderStarFromNumber } from '../../utils/helper'
 import product_default from '../../assets/product_default.png'
 import { productExtraInfo } from '../../utils/constants';
@@ -10,16 +10,26 @@ const ProductDetail = () => {
   const { pid, productname, category } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
-
+  const [recommendedProducts, setRecommendedProducts] = useState(null)
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
     //console.log(response)
     if (response.statusCode === 200)
       setProduct(response.data)
   }
+
+  const fetchRecommended = async () => {
+    const res = await apiGetRecommendedProducts(pid);
+    if (res.status_code === 200) {
+      setRecommendedProducts(res.data)
+    }
+  }
+
   useEffect(() => {
-    if (pid)
+    if (pid) {
       fetchProductData()
+      fetchRecommended()
+    }
   }, [pid])
 
   // const handleQuantity = useCallback((x) => {
@@ -86,14 +96,18 @@ const ProductDetail = () => {
         </div>
       </div>
       <div className='w-main m-auto mt-8'>
-        <ProductInfomation des={product?.description}/>
+        <ProductInfomation des={product?.description} />
       </div>
       <div className='w-full flex justify-center'>
         <div className="w-main">
           <h2 className="text-[20px] uppercase font-semibold py-2 border-b-4 border-main">
             Sản phẩm tương tự
           </h2>
-          {/* Sử dụng thuật toán đề xuất dựa trên sản phẩm */}
+          <div className="grid grid-cols-6 gap-4 mt-4">
+            {recommendedProducts?.map((e) => (
+              <Product key={e.id} productData={e} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
