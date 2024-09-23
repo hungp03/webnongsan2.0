@@ -5,6 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
 app = FastAPI()
 
 origins = [
