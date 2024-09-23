@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { apiGetProduct, apiGetRecommendedProducts } from '../../apis';
-import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, Product } from '../../components';
+import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, ProductCard } from '../../components';
 import { formatMoney, renderStarFromNumber } from '../../utils/helper'
 import product_default from '../../assets/product_default.png'
 import { productExtraInfo } from '../../utils/constants';
@@ -103,9 +103,9 @@ const ProductDetail = () => {
           <h2 className="text-[20px] uppercase font-semibold py-2 border-b-4 border-main">
             Sản phẩm tương tự
           </h2>
-          <div className="grid grid-cols-6 gap-4 mt-4">
+          <div className="grid grid-cols-6 gap-4 mt-4 ">
             {recommendedProducts?.map((e) => (
-              <Product key={e.id} productData={e} />
+              <ProductCard key={e.id} productData={e} />
             ))}
           </div>
         </div>

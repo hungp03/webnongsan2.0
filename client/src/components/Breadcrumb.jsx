@@ -5,7 +5,6 @@ import icons from '../utils/icons'
 
 const { GrNext } = icons
 const Breadcrumb = ({ title, category }) => {
-    //console.log({title, category})
     const routes = [
         { path: "/:category", breadcrumb: category },
         { path: "/", breadcrumb: "Home" },

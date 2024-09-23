@@ -20,7 +20,7 @@ const TopHeader = () => {
     return (
         <div className="h-[38px] w-full bg-main flex items-center justify-center">
             <div className="w-main flex items-center justify-between text-xs text-white">
-                <span>Liên hệ (+84) 123456789</span>
+                <span>/</span>
                 {!isLoggedIn
                     ? <Link className=" hover:text-gray-700" to={`/${path.LOGIN}`}>Đăng nhập hoặc đăng ký</Link>
                     : <div className="flex items-center gap-2">
