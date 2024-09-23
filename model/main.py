@@ -5,11 +5,25 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 app = FastAPI()
 
+DB_HOST = os.getenv('DB_HOST')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_NAME = os.getenv('DB_NAME')
+
+CLIENT1 = os.getenv('CLIENT1')
+CLIENT2 = os.getenv('CLIENT2')
+CLIENT3 = os.getenv('CLIENT3')
+
 origins = [
-    "http://localhost:5173",
+    CLIENT1,
+    CLIENT2,
+    CLIENT3
 ]
 
 app.add_middleware(
@@ -20,7 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# lưu trữ cache cho sản phẩm
+# Lưu trữ cache cho sản phẩm
 cached_products = None
 cached_product_count = None
 
@@ -28,10 +42,10 @@ def get_products_from_db():
     global cached_products, cached_product_count
 
     db_connection = mysql.connector.connect(
-        host="localhost",      
-        user="root",           
-        password="123456",   
-        database="webnongsan"  
+        host=DB_HOST,      
+        user=DB_USER,           
+        password=DB_PASSWORD,   
+        database=DB_NAME  
     )
     cursor = db_connection.cursor()
     cursor.execute("SELECT COUNT(*) FROM products")
@@ -56,7 +70,7 @@ def get_products_from_db():
     return cached_products
 
 # Hàm tính khoảng cách tương tự giữa sản phẩm
-def calculate_distance(product, current_product, price_weight=0.4, category_weight=0.2, description_weight=0.2, name_weight=0.2):
+def calculate_distance(product, current_product, price_weight=0.1, category_weight=0.25, description_weight=0.25, name_weight=0.4):
     if product['id'] == current_product['id']:
         return float('inf')  # Loại bỏ sản phẩm hiện tại
 
@@ -72,7 +86,7 @@ def calculate_distance(product, current_product, price_weight=0.4, category_weig
     description_distance = 1 - cosine_sim_desc[description_index, current_description_index]
     name_distance = 1 - cosine_sim_name[description_index, current_description_index]
 
-    # Tổng khoảng cách
+    # Tổng khoảng cách, ưu tiên tên và mô tả
     return (price_weight * price_distance +
             category_weight * category_distance +
             description_weight * description_distance +
@@ -107,7 +121,7 @@ def get_similar_products(product_id: int):
     cosine_sim_desc = cosine_similarity(description_vectors)
     cosine_sim_name = cosine_similarity(name_vectors)
 
-    # Tính toán khoảng cách và chọn 10 sản phẩm tương tự nhất
+    # Tính toán khoảng cách và chọn 6 sản phẩm tương tự nhất
     distances = [(product, calculate_distance(product, current_product)) for product in products]
     filtered_distances = [item for item in distances if item[1] != float('inf')]
     top_6_similar_products = sorted(filtered_distances, key=lambda x: x[1])[:6]
