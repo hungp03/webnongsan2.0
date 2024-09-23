@@ -31,11 +31,11 @@ const Product = ({ productData }) => {
             </div>
           )}
 
-          <div className="w-full aspect-w-1 aspect-h-1">
+          <div className="aspect-w-1 aspect-h-1">
             <img
               src={productData?.imageUrl || product_default}
               alt=""
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-40"
             />
           </div>
         </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { Breadcrumb, ProductCard } from '../../components'
+import { Breadcrumb, ProductCard, SearchItem } from '../../components'
 import { apiGetProducts } from '../../apis';
 import Masonry from 'react-masonry-css'
 
@@ -14,15 +14,17 @@ const breakpointColumnsObj = {
 
 const Product = () => {
   const [products, setProducts] = useState(null)
+  const [activeClick, setActiveClick] = useState(null)
   const { category } = useParams();
+  //console.log(category)
   const fetchProducts = async (queries) => {
     const response = await apiGetProducts(queries)
-    console.log(response)
+    //console.log(response)
     setProducts(response.data.result)
   }
 
   useEffect(() => {
-    if (category) {
+    if (category || category !== 'products') {
       const queries = {
         page: 1, 
         size: 10, 
@@ -31,6 +33,13 @@ const Product = () => {
       fetchProducts(queries);
     }
   }, [category]);
+
+  const changeActiveFilter = useCallback((name)=>{
+    if (activeClick === name)
+      setActiveClick(null)
+    else
+      setActiveClick(name)
+  }, [activeClick])
   return (
     <div className='w-full'>
       <div className='h-20 flex justify-center items-center bg-gray-100 '>
@@ -40,14 +49,18 @@ const Product = () => {
         </div>
       </div>
       <div className='w-main border p-4 flex justify-between mt-8 m-auto'>
-        <div className='w-4/5 flex-auto' >Filter</div>
+        <div className='w-4/5 flex-auto flex items-center gap-4' >
+        <span className='font-semibold text-sm'>Filter</span>
+          <SearchItem name='price' activeClick={activeClick} changeActiveFilter={changeActiveFilter}/>
+          <SearchItem name='rating'activeClick={activeClick} changeActiveFilter={changeActiveFilter}/>
+        </div>
         <div className='w-1/5 flex-auto' >Sort</div>
       </div>
       <div className='mt-8 w-main m-auto'>
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-0"
-          columnClassName="my-masonry-grid_column">
+          columnClassName="my-masonry-grid_column mb-[-20px]">
            {products?.map((e) => (
             <ProductCard key={e.id} productData={e} />
           ))}

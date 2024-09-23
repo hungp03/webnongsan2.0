@@ -12,7 +12,6 @@ origins = [
     "http://localhost:5173",
 ]
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -20,51 +19,67 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Hàm kết nối đến MySQL và lấy dữ liệu sản phẩm
-def get_products_from_db():
-    db_connection = mysql.connector.connect(
-        host="localhost",      # Địa chỉ host
-        user="root",           # Tên người dùng
-        password="123456",   # Mật khẩu
-        database="webnongsan"  # Tên database
-    )
 
-    cursor = db_connection.cursor(dictionary=True)
-    query = "SELECT p.id, p.product_name, p.price, p.unit, p.rating,p.image_url, c.name as category, p.category_id, description FROM products p JOIN categories c ON p.category_id = c.id"
-    cursor.execute(query)
-    products = cursor.fetchall()
-    cursor.close()
+# lưu trữ cache cho sản phẩm
+cached_products = None
+cached_product_count = None
+
+def get_products_from_db():
+    global cached_products, cached_product_count
+
+    db_connection = mysql.connector.connect(
+        host="localhost",      
+        user="root",           
+        password="123456",   
+        database="webnongsan"  
+    )
+    cursor = db_connection.cursor()
+    cursor.execute("SELECT COUNT(*) FROM products")
+    current_product_count = cursor.fetchone()[0]
+
+    # Kiểm tra nếu cache là None hoặc số lượng sản phẩm đã thay đổi
+    if cached_products is None or cached_product_count != current_product_count:
+        # Cập nhật cache
+        cursor = db_connection.cursor(dictionary=True)
+        query = """
+            SELECT p.id, p.product_name, p.price, p.unit, p.rating, p.image_url, 
+                   c.name as category, p.category_id, description 
+            FROM products p 
+            JOIN categories c ON p.category_id = c.id
+        """
+        cursor.execute(query)
+        cached_products = cursor.fetchall()
+        cached_product_count = current_product_count
+        cursor.close()
+
     db_connection.close()
-    #print(products)
-    return products
+    return cached_products
 
 # Hàm tính khoảng cách tương tự giữa sản phẩm
 def calculate_distance(product, current_product, price_weight=0.4, category_weight=0.2, description_weight=0.2, name_weight=0.2):
     if product['id'] == current_product['id']:
         return float('inf')  # Loại bỏ sản phẩm hiện tại
-    
+
     # Khoảng cách giá
     price_distance = abs(product['price'] - current_product['price'])
-    
+
     # Phân loại
     category_distance = 0 if product['category_id'] == current_product['category_id'] else 1
-    
+
     # Mô tả và tên
     description_index = products.index(product)
     current_description_index = products.index(current_product)
     description_distance = 1 - cosine_sim_desc[description_index, current_description_index]
     name_distance = 1 - cosine_sim_name[description_index, current_description_index]
-    
+
     # Tổng khoảng cách
     return (price_weight * price_distance +
             category_weight * category_distance +
             description_weight * description_distance +
             name_weight * name_distance)
 
-
 @app.get("/similar-products/{product_id}")
 def get_similar_products(product_id: int):
-    # Lấy dữ liệu sản phẩm từ MySQL
     global products
     products = get_products_from_db()
 
@@ -97,7 +112,6 @@ def get_similar_products(product_id: int):
     filtered_distances = [item for item in distances if item[1] != float('inf')]
     top_6_similar_products = sorted(filtered_distances, key=lambda x: x[1])[:6]
 
-    # Gộp phản hồi gồm mã trạng thái và dữ liệu
     response_data = {
         "status_code": 200,
         "data": [{"id": product['id'], "product_name": product['product_name'], "imageUrl": product['image_url'], "distance": distance, "price": product['price'], "rating": product['rating'], "category": product['category']} for product, distance in top_6_similar_products]

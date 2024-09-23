@@ -10,7 +10,7 @@ const Sidebar = () => {
     });
     
     return (
-        <div className="flex flex-col border">
+        <div className="flex flex-col border h-[400px] overflow-y-auto">
             {categories?.map((e) => (
                 <NavLink
                     key={createSlug(e.name)}
@@ -19,8 +19,7 @@ const Sidebar = () => {
                         isActive
                             ? "bg-main text-sm px-5 pt-[15px] pb-[14px] hover:text-main"
                             : "text-sm px-5 pt-[15px] pb-[14px] hover:text-main"
-                    }
-                >
+                    }>
                     <div className="flex items-center gap-2">
                         <img
                             src={e.imageUrl || category_default}
