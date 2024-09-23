@@ -30,8 +30,7 @@ def get_products_from_db():
     )
 
     cursor = db_connection.cursor(dictionary=True)
-    # query = "SELECT id, product_name, price, unit, description, category_id FROM products"
-    query = "SELECT * FROM products"
+    query = "SELECT p.id, p.product_name, p.price, p.unit, p.rating,p.image_url, c.name as category, p.category_id, description FROM products p JOIN categories c ON p.category_id = c.id"
     cursor.execute(query)
     products = cursor.fetchall()
     cursor.close()
@@ -101,7 +100,7 @@ def get_similar_products(product_id: int):
     # Gộp phản hồi gồm mã trạng thái và dữ liệu
     response_data = {
         "status_code": 200,
-        "data": [{"id": product['id'], "product_name": product['product_name'], "distance": distance, "price": product['price'], "rating": product['rating']} for product, distance in top_6_similar_products]
+        "data": [{"id": product['id'], "product_name": product['product_name'], "imageUrl": product['image_url'], "distance": distance, "price": product['price'], "rating": product['rating'], "category": product['category']} for product, distance in top_6_similar_products]
     }
 
     return JSONResponse(status_code=200, content=response_data)
