@@ -4,6 +4,7 @@ import { Breadcrumb, ProductCard, SearchItem } from '../../components'
 import { apiGetProducts } from '../../apis';
 import Masonry from 'react-masonry-css'
 
+
 const breakpointColumnsObj = {
   default: 5,
   1100: 4,
@@ -51,7 +52,7 @@ const Product = () => {
       <div className='w-main border p-4 flex justify-between mt-8 m-auto'>
         <div className='w-4/5 flex-auto flex items-center gap-4' >
         <span className='font-semibold text-sm'>Filter</span>
-          <SearchItem name='price' activeClick={activeClick} changeActiveFilter={changeActiveFilter}/>
+          <SearchItem name='price' activeClick={activeClick} changeActiveFilter={changeActiveFilter} type='input'/>
           <SearchItem name='rating'activeClick={activeClick} changeActiveFilter={changeActiveFilter}/>
         </div>
         <div className='w-1/5 flex-auto' >Sort</div>
