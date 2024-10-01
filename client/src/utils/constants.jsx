@@ -44,3 +44,25 @@ export const productExtraInfo = [{
   icon: <FaPhone />
 }
 ]
+export const voteOption = [
+  {
+    id: 1,
+    text:"Rất tệ"
+  },
+  {
+    id: 2,
+    text:"Tệ"
+  },
+  {
+    id: 3,
+    text:"Bình thường"
+  },
+  {
+    id: 4,
+    text:"Tốt"
+  },
+  {
+    id: 5,
+    text:"Rất tốt"
+  }
+]
