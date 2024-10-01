@@ -36,8 +36,8 @@ export const apiGetRatingsPage = async (pid,params)=>
         params,
     });
 
-export const apiGetRatings = async (pid)=>
-    axiosInstance({
-        url: `/product/ratings`,
-        method: "get",
-    });
+// export const apiGetRatings = async (pid)=>
+//     axiosInstance({
+//         url: `/product/ratings`,
+//         method: "get",
+//     });

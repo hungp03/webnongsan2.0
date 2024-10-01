@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatings, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '../../apis';
+import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '../../apis';
 import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption,Comment, ProductCard } from '../../components';
 import { formatMoney, renderStarFromNumber } from '../../utils/helper'
 import product_default from '../../assets/product_default.png'
