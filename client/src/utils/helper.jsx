@@ -56,21 +56,6 @@ export const usePaginate = (totalPage, currentPage, pageSize, totalProduct, sibl
         const middleRange = generateRange(siblingLeft,siblingRight)
         return [1, <BiDotsHorizontalRounded/>, ...middleRange, <BiDotsHorizontalRounded/>, totalPage]
     }
-
-    // if(isShowLeft && isShowRight){
-    //   const siblingLeft = Math.max(currentPage - siblingCount, 1)
-    //   const siblingRight = Math.min(currentPage + siblingCount, totalPage)
-    //   // Kiểm tra điều kiện nếu currentPage nhỏ hơn hoặc bằng 3, không hiển thị dấu ba chấm ở phía trước
-    //   if (currentPage <= 3) {
-    //     return [...generateRange(1, 5), <BiDotsHorizontalRounded/>, totalPage];
-    //   }
-    //   // Kiểm tra nếu currentPage nằm gần cuối, không hiển thị dấu ba chấm phía sau
-    //   if (currentPage >= totalPage - 2) {
-    //     return [1, <BiDotsHorizontalRounded size={20} />, ...generateRange(totalPage - 4, totalPage)];
-    //   }
-    //   const middleRange = generateRange(siblingLeft,siblingRight)
-    //   return [1, <BiDotsHorizontalRounded/>, ...middleRange, <BiDotsHorizontalRounded/>, totalPage]
-    // }
   },[totalPage, currentPage, pageSize, totalProduct, siblingCount])
   return paginationArray
 }

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatings, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '../../apis';
+import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '../../apis';
 import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption,Comment, ProductCard } from '../../components';
 import { formatMoney, renderStarFromNumber } from '../../utils/helper'
 import product_default from '../../assets/product_default.png'
@@ -16,6 +16,15 @@ import Pagination from '../../components/paginate/Pagination';
 const ProductDetail = () => {
   const { pid, productname, category } = useParams();
   const [product, setProduct] = useState(null);
+  const [paginate, setPaginate] = useState(null)
+  const [feedbacksPage,setFeedbacksPage] = useState(null)
+  const [feedbacks,setFeedbacks] = useState(null)
+  const [currentPage,setCurrentPage] = useState(1)
+  const [update,setUpdate] = useState(false)
+  const [uid, setUid] = useState(null)
+  const {isLoggedIn} = useSelector(state=> state.user)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [quantity, setQuantity] = useState(1);
   const [recommendedProducts, setRecommendedProducts] = useState(null)
   const fetchProductData = async () => {
@@ -31,6 +40,26 @@ const ProductDetail = () => {
       setRecommendedProducts(res.data)
     }
   }
+  const fetchFeedbacksPageData = async (page = 1)=>{
+    const response = await apiGetRatingsPage(pid,{ page, size: 5 })
+    if (response.statusCode === 200){
+      setFeedbacksPage(response.data?.result)
+      setPaginate(response.data?.meta)
+      setCurrentPage(page)
+    }
+
+  }
+  const fetchFeedbacksData = async ()=>{
+    const response = await apiGetRatingsPage(pid,{ page: 1 })
+    if (response.statusCode === 200)
+      setFeedbacks(response.data?.result)
+  }
+  const fetchUserData = async ()=>{
+    const response = await apiGetCurrentUser()
+    if (response.statusCode == 200)
+      setUid(response.data?.user?.id)
+  }
+
 
   useEffect(() => {
     if (pid) {
@@ -38,6 +67,19 @@ const ProductDetail = () => {
       fetchRecommended()
     }
   }, [pid])
+  useEffect(() => {
+    if (pid)
+      fetchFeedbacksPageData(currentPage)
+      fetchFeedbacksData()
+  }, [pid,update])
+  useEffect(() => {
+    if (pid)
+      fetchFeedbacksPageData(currentPage)
+  }, [pid,currentPage])
+  useEffect(()=>{
+    fetchUserData()
+  },[])
+
 
   // const handleQuantity = useCallback((x) => {
   //   if (!Number(x) || Number(x) < 1) {
@@ -174,8 +216,6 @@ const ProductDetail = () => {
             </div>
           </div>
         } rerender = {rerender}/> 
-            
-        <ProductInfomation des={product?.description} />
       </div>
       <div className='w-full flex justify-center'>
         <div className="w-main">
