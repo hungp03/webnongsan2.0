@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Product } from ".";
+import { ProductCard } from ".";
 import { apiGetProducts } from "../apis";
 
 const FeatureProduct = () => {
@@ -25,7 +25,7 @@ const FeatureProduct = () => {
 
       <div className="grid grid-cols-6 gap-4 mt-4">
         {products?.map((e) => (
-          <Product key={e.id} productData={e} />
+          <ProductCard key={e.id} productData={e} />
         ))}
       </div>
 

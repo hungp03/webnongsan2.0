@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { formatMoney, renderStarFromNumber } from "../utils/helper";
-import { SelectOption } from "./";
+import { SelectOption } from ".";
 import icons from "../utils/icons";
 import { Link } from "react-router-dom";
 import product_default from '../assets/product_default.png'
 const { FaCartShopping, FaHeart } = icons;
 
-const Product = ({ productData}) => {
+const Product = ({ productData }) => {
   const [showOption, setShowOption] = useState(false);
 
   return (
@@ -20,9 +20,9 @@ const Product = ({ productData}) => {
           e.stopPropagation();
           setShowOption(false);
         }}
-        to={`${productData?.category}/${productData?.id}/${productData?.product_name}`}
+        to={`/${encodeURIComponent(productData?.category)}/${productData?.id}/${encodeURIComponent(productData?.product_name)}`}
         className="w-full border p-[15px] flex flex-col items-center">
-        
+
         <div className="w-full relative flex items-center justify-center">
           {showOption && (
             <div className="absolute bottom-[-10px] flex justify-center left-0 right-0 gap-2 animate-slide-top">
@@ -31,14 +31,15 @@ const Product = ({ productData}) => {
             </div>
           )}
 
-          <img
-            src={
-              productData?.imageUrl || product_default
-            }
-            alt=""
-            className="object-cover"/>
+          <div className="aspect-w-1 aspect-h-1">
+            <img
+              src={productData?.imageUrl || product_default}
+              alt=""
+              className="object-cover w-full h-40"
+            />
+          </div>
         </div>
-        
+
         <div className="flex flex-col gap-1 mt-[15px] items-start w-full">
           <span className="line-clamp-1">{productData?.product_name}</span>
           <span className="flex">

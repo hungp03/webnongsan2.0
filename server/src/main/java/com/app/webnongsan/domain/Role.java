@@ -16,6 +16,4 @@ public class Role {
     private long id;
 
     private String roleName;
-
-    private String description;
 }

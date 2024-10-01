@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatings, apiGetRatingsPage, apiRatings } from '../../apis';
-import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption,Comment } from '../../components';
+import { apiGetCurrentUser, apiGetProduct, apiGetRatings, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '../../apis';
+import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption,Comment, ProductCard } from '../../components';
 import { formatMoney, renderStarFromNumber } from '../../utils/helper'
 import product_default from '../../assets/product_default.png'
 import { productExtraInfo } from '../../utils/constants';
@@ -14,60 +14,31 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '../../components/paginate/Pagination';
 
 const ProductDetail = () => {
-  const { pid, productname, category } = useParams()
-  const [product, setProduct] = useState(null)
-  const [paginate, setPaginate] = useState(null)
-  const [feedbacksPage,setFeedbacksPage] = useState(null)
-  const [feedbacks,setFeedbacks] = useState(null)
-  const [currentPage,setCurrentPage] = useState(1)
-  const [update,setUpdate] = useState(false)
-  const [quantity, setQuantity] = useState(1)
-  const [uid, setUid] = useState(null)
-  const {isLoggedIn} = useSelector(state=> state.user)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-
-
+  const { pid, productname, category } = useParams();
+  const [product, setProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [recommendedProducts, setRecommendedProducts] = useState(null)
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
     //console.log(response)
     if (response.statusCode === 200)
       setProduct(response.data)
   }
-  
-  const fetchFeedbacksPageData = async (page = 1)=>{
-    const response = await apiGetRatingsPage(pid,{ page, size: 5 })
-    if (response.statusCode === 200){
-      setFeedbacksPage(response.data?.result)
-      setPaginate(response.data?.meta)
-      setCurrentPage(page)
-    }
 
+  const fetchRecommended = async () => {
+    const res = await apiGetRecommendedProducts(pid);
+    if (res.status_code === 200) {
+      setRecommendedProducts(res.data)
+    }
   }
-  const fetchFeedbacksData = async ()=>{
-    const response = await apiGetRatingsPage(pid,{ page: 1 })
-    if (response.statusCode === 200)
-      setFeedbacks(response.data?.result)
-  }
-  const fetchUserData = async ()=>{
-    const response = await apiGetCurrentUser()
-    if (response.statusCode == 200)
-      setUid(response.data?.user?.id)
-  }
+
   useEffect(() => {
-    if (pid)
+    if (pid) {
       fetchProductData()
-      fetchFeedbacksPageData(currentPage)
-      fetchFeedbacksData()
-  }, [pid,update])
-  useEffect(() => {
-    if (pid)
-      fetchFeedbacksPageData(currentPage)
-  }, [pid,currentPage])
-  useEffect(()=>{
-    fetchUserData()
-  },[])
-  
+      fetchRecommended()
+    }
+  }, [pid])
+
   // const handleQuantity = useCallback((x) => {
   //   if (!Number(x) || Number(x) < 1) {
   //     return
@@ -204,13 +175,18 @@ const ProductDetail = () => {
           </div>
         } rerender = {rerender}/> 
             
+        <ProductInfomation des={product?.description} />
       </div>
       <div className='w-full flex justify-center'>
         <div className="w-main">
           <h2 className="text-[20px] uppercase font-semibold py-2 border-b-4 border-main">
             Sản phẩm tương tự
           </h2>
-          {/* Sử dụng thuật toán đề xuất dựa trên sản phẩm */}
+          <div className="grid grid-cols-6 gap-4 mt-4 ">
+            {recommendedProducts?.map((e) => (
+              <ProductCard key={e.id} productData={e} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
