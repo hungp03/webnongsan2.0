@@ -2,14 +2,16 @@ import React, {useEffect} from 'react'
 import path from './utils/path'
 import { Route, Routes, useLocation} from "react-router-dom";
 import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword} from "./pages/guest";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getCategories } from "./store/app/asyncActions";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { Modal } from './components';
 
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const {isShowModal, modalChildren} = useSelector(state => state.app)
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -19,7 +21,8 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div className="min-h-screen font-main">
+    <div className="min-h-screen font-main relative">
+      {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes> 
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />}></Route>
