@@ -11,7 +11,7 @@ import {
   FaEye,
   FaHeart,
   FaTruck,
-  FaCaretDown
+  FaCaretDown, FaTimes
 } from "react-icons/fa";
 import { IoMenu, IoLogOutOutline } from "react-icons/io5";
 
@@ -31,7 +31,8 @@ const icons = {
   SiAdguard,
   FaTruck,
   GiReturnArrow,
-  FaCaretDown
+  FaCaretDown,
+  FaTimes 
 };
 
 export default icons;

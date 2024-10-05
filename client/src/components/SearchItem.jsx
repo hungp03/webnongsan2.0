@@ -1,67 +1,95 @@
-import React, { memo, useState, useEffect } from 'react'
-import icons from '../utils/icons'
-import { ratingStar } from '../utils/constants'
-import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
-import path from '../utils/path'
+import React, { memo, useState, useEffect } from 'react';
+import icons from '../utils/icons';
+import {useNavigate, useParams } from 'react-router-dom';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
-const { FaCaretDown, FaStar } = icons
-const SearchItem = ({ name, activeClick, changeActiveFilter, type = 'checkbox' }) => {
-    const navigate = useNavigate()
-    const {category} = useParams()
-    const [selected, setSelected] = useState([])
-    const handleSelected = (e) => {
-        const value = e.target.value;
-        if (selected.includes(value)) {
-            setSelected(prev => prev.filter(el => el !== value));
-        } else {
-            setSelected(prev => [...prev, value]);
-        }
-    }
+const { FaCaretDown, FaTimes } = icons;
 
-    useEffect(() => {
+const SearchItem = ({ name, activeClick, changeActiveFilter, step, min, max }) => {
+    const navigate = useNavigate();
+    const { category } = useParams();
+    const [sliderValue, setSliderValue] = useState([min, max]);
+
+    const handleSliderChange = (value) => {
+        const queries = new URLSearchParams(window.location.search);
+        queries.set(name, value.join('-'));
         navigate({
             pathname: `/${category}`,
-            search: createSearchParams({
-                rating: selected
-            }).toString()
-        })
-    }, [selected])
-    //console.log(selected)
+            search: queries.toString()
+        }, { replace: true });
+        setSliderValue(value);
+    };
+
+    const handleReset = () => {
+        const queries = new URLSearchParams(window.location.search);
+        queries.delete(name);
+
+        navigate({
+            pathname: `/${category}`,
+            search: queries.toString()
+        }, { replace: true });
+
+        setSliderValue([min, max]);
+    };
+
+    const handleClosePopup = () => {
+        changeActiveFilter(null);
+    };
+
+    useEffect(() => {
+        const queries = new URLSearchParams(window.location.search);
+        const priceParam = queries.get('price');
+        const ratingParam = queries.get('rating');
+
+        if (name === 'price' && priceParam) {
+            setSliderValue(priceParam.split('-').map(Number));
+        } else if (name === 'rating' && ratingParam) {
+            setSliderValue(ratingParam.split('-').map(Number));
+        }
+    }, [name, navigate]);
+
     return (
-        <div className='p-3 text-gray-700 text-xs gap-6 relative border border-gray-800 flex justify-between items-center cursor-pointer' onClick={() => changeActiveFilter(name)}>
+        <div
+            className='p-3 text-gray-700 text-xs gap-6 relative border border-gray-800 flex justify-between items-center cursor-pointer'
+            onClick={() => changeActiveFilter(name)}
+        >
             <span className='capitalize'>{name}</span>
             <FaCaretDown />
-            {activeClick === name && <div className='z-10 absolute top-[calc(100%+1px)] left-0 w-fit p-4 border bg-white min-w-[120px]'>
-                {type === 'checkbox' && <div >
-                    <div className='p-4 items-center flex justify-between gap-8'>
-                        <span className='whitespace-nowrap'>{`${selected.length} selected`}</span>
-                        <span className='underline cursor-pointer hover:text-main' onClick={e => {
-                            e.stopPropagation()
-                            setSelected([])
-                        }}>Reset</span>
+            {activeClick === name && (
+                <div className='z-10 absolute top-[calc(100%+1px)] left-0 w-fit p-4 border bg-white min-w-[170px]'>
+                    <div className='flex justify-between items-center'>
+                        <span className='font-semibold'>Filter by {name}</span>
+                        <button onClick={handleClosePopup} className='text-gray-500 hover:text-red-500'>
+                            <FaTimes />
+                        </button>
                     </div>
-                    <div className='flex flex-col gap-2' onClick={e => e.stopPropagation()}>
-                        {ratingStar?.map((e, idx) => (
-                            <div className='flex items-center gap-4' key={idx}>
-                                <input
-                                    type='checkbox'
-                                    value={e}
-                                    name={e}
-                                    id={e}
-                                    className='form-checkbox'
-                                    onChange={handleSelected}
-                                    checked={selected.includes(e)}
-                                />
-                                <label htmlFor={e} className='flex items-center gap-1'>
-                                    {e} <FaStar color='yellow' />
-                                </label>
-                            </div>
-                        ))}
+                    <div className='mt-4'>
+                        <div className='flex justify-between mb-2'>
+                            <span>{sliderValue[0]}</span> 
+                            <span>{sliderValue[1]}</span> 
+                        </div>
+                        <Slider
+                            range
+                            min={min}
+                            max={max}
+                            step={step}
+                            value={sliderValue}
+                            onChange={handleSliderChange}
+                        />
                     </div>
-                </div>}
-            </div>}
+                    <div className='mt-2 text-center'>
+                        <button
+                            className='hover:text-main underline text-sm'
+                            onClick={handleReset}
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
-    )
+    );
 }
 
-export default memo(SearchItem)
+export default memo(SearchItem);

@@ -5,7 +5,7 @@ const SelectQuantity = ({ quantity, changeQuantity, maxQuantity }) => {
         <div className='flex items-center'>
             <span className='p-2 cursor-pointer text-main' onClick={() => changeQuantity('minus')}>-</span>
             <input
-                className='px-4 py-2 outline-none w-[50px]'
+                className='px-4 py-2 outline-none w-[70px]'
                 type='text'
                 value={quantity}
                 //onChange={e => handleQuantity(e.target.value)}

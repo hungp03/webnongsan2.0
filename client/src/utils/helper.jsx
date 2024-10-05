@@ -1,4 +1,3 @@
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import icons from "./icons";
 import { useMemo } from "react";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
@@ -16,15 +15,12 @@ export const createSlug = (str) =>
 export const formatMoney = (money) => Number(money?.toFixed(1)).toLocaleString();
 
 export const renderStarFromNumber = (number,size) => {
-  if(!Number(number)) return
-  const stars = []
+  if (number === undefined || number === null) return; 
   number = Math.round(number)
-  for (let i = 0; i< +number; i++) stars.push(<AiFillStar color="orange" size={size || 16}/>)
-  for(let i = 5; i > +number; i--) stars.push(<AiOutlineStar color="orange" size={size || 16}/>)
-  // return Array.from({ length: 5 }, (_, i) => 
-  //   i < number ? <FaStar key={i} color="orange" /> : <FaRegStar key={i} color="orange" />
-  // );
-  return stars
+  
+  return Array.from({ length: 5 }, (_, i) => 
+    i < number ? <FaStar key={i} color="orange" /> : <FaRegStar key={i} color="orange" />
+  );
 };
 
 export const generateRange = (start,end)=>{
