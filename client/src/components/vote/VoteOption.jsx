@@ -1,5 +1,4 @@
 import React,{memo,useRef,useEffect, useState} from "react";
-import logo from '../../assets/logo.png'
 import { voteOption } from "../../utils/constants";
 import { AiFillStar } from "react-icons/ai";
 import {Button} from '../../components';
@@ -11,7 +10,7 @@ const VoteOption = ({nameProduct, handleSubmitOption})=>{
         modalRef.current.scrollIntoView({block:'center',behavior:'smooth'})
     },[])
     return (
-        <div onClick={e=>e.stopPropagation()} ref={modalRef} className="bg-white h-[350px] w-[700px] flex items-center justify-center flex-col px-6">
+        <div onClick={e=>e.stopPropagation()} ref={modalRef} className="bg-white h-[400px] w-[700px] flex items-center justify-center flex-col px-6">
             <h2 className="text-center text-medium text-lg">{`Đánh giá sản phẩm ${nameProduct}`}</h2>
             <textarea 
             className="form-textarea w-full placeholder:italic placeholder:text-xs placeholder:text-gray-500 text-sm"
