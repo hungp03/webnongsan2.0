@@ -33,23 +33,12 @@ public class FeedbackController {
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
 
-//    public ResponseEntity<Feedback> add(@RequestBody Feedback feedback) throws ResourceInvalidException{
-//        return ResponseEntity.status(HttpStatus.CREATED).body(this.feedbackService.addFeedback(feedback));
-//    }
     @PutMapping("product/ratings")
     @ApiMessage("Create a feedback")
     public ResponseEntity<Feedback> add(@RequestBody FeedbackDTO feedbackDTO) throws ResourceInvalidException{
-
         return ResponseEntity.status(HttpStatus.CREATED).body(this.feedbackService.addFeedback(feedbackDTO));
     }
-//    @GetMapping("product/ratings/{id}")
-//    @ApiMessage("Get feedbacks by product")
-//    public ResponseEntity<List<FeedbackDTO>> get(@PathVariable("id") long id) throws ResourceInvalidException{
-//        if(!this.feedbackRepository.existsById(id)){
-//            throw new ResourceInvalidException("Product id = " + id + " không tồn tại");
-//        }
-//        return ResponseEntity.ok(this.feedbackService.getByProductId(id));
-//    }
+
     @GetMapping("product/ratings/{id}")
     @ApiMessage("Get feedbacks by product")
     public ResponseEntity<PaginationDTO> getByProductId(

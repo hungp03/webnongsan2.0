@@ -23,7 +23,7 @@ const ProductInfomation = ({ des, review, rerender }) => {
 
             <div className='w-full border p-4'>
                 {activedTab === 1 && <p>{des}</p>}
-                {activedTab === 2 && <div>{review}</div>} 
+                {activedTab === 2 && <div>{review}</div>}
             </div>
         </div>
     );

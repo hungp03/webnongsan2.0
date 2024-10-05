@@ -27,25 +27,37 @@ public class FeedbackService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public Feedback addFeedback(FeedbackDTO feedbackDTO) throws ResourceInvalidException{
-        User u = userRepository.findById(feedbackDTO.getUserId()).orElseThrow(()-> new ResourceInvalidException("User không tồn tại"));
-        if(u == null) throw new ResourceInvalidException("User không tồn tại");
-        Product p = productRepository.findById(feedbackDTO.getProductId()).orElseThrow(()-> new ResourceInvalidException("Sản phẩm không tồn tại"));
-        boolean exists = this.feedbackRepository.existsByUserIdAndProductId(u.getId(),p.getId());
-        if(!exists){
-            Feedback f = new Feedback();
+    public Feedback addFeedback(FeedbackDTO feedbackDTO) throws ResourceInvalidException {
+        User u = userRepository.findById(feedbackDTO.getUserId()).orElseThrow(() -> new ResourceInvalidException("User không tồn tại"));
+        if (u == null) throw new ResourceInvalidException("User không tồn tại");
+
+        Product p = productRepository.findById(feedbackDTO.getProductId()).orElseThrow(() -> new ResourceInvalidException("Sản phẩm không tồn tại"));
+
+        boolean exists = this.feedbackRepository.existsByUserIdAndProductId(u.getId(), p.getId());
+
+        Feedback f;
+        if (!exists) {
+            f = new Feedback();
             f.setProduct(p);
             f.setUser(u);
             f.setDescription(feedbackDTO.getDescription());
             f.setStatus(0);
             f.setRatingStar(feedbackDTO.getRatingStar());
-            return this.feedbackRepository.save(f);
+            this.feedbackRepository.save(f);
+        } else {
+            f = feedbackRepository.findByUserIdAndProductId(u.getId(), p.getId());
+            f.setDescription(feedbackDTO.getDescription());
+            f.setRatingStar(feedbackDTO.getRatingStar());
+            this.feedbackRepository.save(f);
         }
-        Feedback f = feedbackRepository.findByUserIdAndProductId(u.getId(),p.getId());
-        f.setDescription(feedbackDTO.getDescription());
-        f.setRatingStar(feedbackDTO.getRatingStar());
-        return this.feedbackRepository.save(f);
+
+        double averageRating = feedbackRepository.calculateAverageRatingByProductId(p.getId());
+        p.setRating(averageRating);
+        productRepository.save(p);
+
+        return f;
     }
+
     public boolean checkValidFeedbackId(long id) {
         return this.feedbackRepository.existsById(id);
     }

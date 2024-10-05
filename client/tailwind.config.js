@@ -18,7 +18,7 @@ module.exports = {
       },
       colors: {
         main: "#10B981",
-      }, 
+      },
       flex: {
         2: "2 2 0%",
         3: "3 3 0%",
@@ -27,7 +27,7 @@ module.exports = {
         6: "6 6 0%",
         7: "7 7 0%",
         8: "8 8 0%",
-      }, 
+      },
       keyframes: {
         "slide-top": {
           "0%": {
@@ -68,7 +68,9 @@ module.exports = {
       },
     },
   },
-  plugins: [], mode: 'jit'
+  plugins: [
+    require("@tailwindcss/forms")
+  ]
 };
 
 

@@ -16,6 +16,8 @@ const breakpointColumnsObj = {
 const Product = () => {
   const [products, setProducts] = useState(null)
   const [activeClick, setActiveClick] = useState(null)
+  const [params] = useSearchParams()
+  console.log(params)
   const { category } = useParams();
   //console.log(category)
   const fetchProducts = async (queries) => {

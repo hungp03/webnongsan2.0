@@ -5,7 +5,7 @@ import PagiItem from "./PagiItem";
 const Pagination = ({totalPage, currentPage, pageSize, totalProduct, onPageChange, siblingCount = 1})=>{
     
     const pagination = usePaginate(totalPage, currentPage, pageSize, totalProduct, siblingCount);
-    console.log(pagination);
+    //console.log(pagination);
     return (
         <div className="flex flex-row my-4 items-center justify-center">
             {pagination?.map((el,index) =>(

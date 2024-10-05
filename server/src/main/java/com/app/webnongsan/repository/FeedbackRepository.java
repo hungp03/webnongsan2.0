@@ -17,9 +17,9 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Long>, JpaSpe
     @Query("SELECT COUNT(f) > 0 FROM Feedback f WHERE f.user.id = :userId AND f.product.id = :productId")
     boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
     long countByProductId(Long productId);
-    //    @Query("SELECT new com.app.webnongsan.domain.response.feedback.FeedbackDTO(f.user.id, f.user.name, f.user.avatarUrl, f.product.id, f.ratingStar, f.description, f.updatedAt) FROM Feedback f WHERE f.product.id = :productId")
-    //    List<FeedbackDTO> findFeedbackByProductId(@Param("productId") Long productId);
     @Query("SELECT f FROM Feedback f WHERE f.user.id = :userId AND f.product.id = :productId")
     Feedback findByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
     Page<Feedback> findByProductId(Long productId, Pageable pageable);
+    @Query("SELECT AVG(f.ratingStar) FROM Feedback f WHERE f.product.id = :productId")
+    double calculateAverageRatingByProductId(@Param("productId") Long productId);
 }
