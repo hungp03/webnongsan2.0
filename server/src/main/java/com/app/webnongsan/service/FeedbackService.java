@@ -37,10 +37,6 @@ public class FeedbackService {
 
         Feedback f;
         if (!exists) {
-<<<<<<< HEAD
-=======
-            // Nếu chưa có feedback, tạo feedback mới
->>>>>>> 75efdee30aa413fbfa801bfcd40c541054cad646
             f = new Feedback();
             f.setProduct(p);
             f.setUser(u);
@@ -49,19 +45,11 @@ public class FeedbackService {
             f.setRatingStar(feedbackDTO.getRatingStar());
             this.feedbackRepository.save(f);
         } else {
-<<<<<<< HEAD
-=======
-   
->>>>>>> 75efdee30aa413fbfa801bfcd40c541054cad646
             f = feedbackRepository.findByUserIdAndProductId(u.getId(), p.getId());
             f.setDescription(feedbackDTO.getDescription());
             f.setRatingStar(feedbackDTO.getRatingStar());
             this.feedbackRepository.save(f);
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> 75efdee30aa413fbfa801bfcd40c541054cad646
         double averageRating = feedbackRepository.calculateAverageRatingByProductId(p.getId());
         p.setRating(averageRating);
         productRepository.save(p);

@@ -20,13 +20,7 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Long>, JpaSpe
     @Query("SELECT f FROM Feedback f WHERE f.user.id = :userId AND f.product.id = :productId")
     Feedback findByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
     Page<Feedback> findByProductId(Long productId, Pageable pageable);
-<<<<<<< HEAD
-    @Query("SELECT AVG(f.ratingStar) FROM Feedback f WHERE f.product.id = :productId")
-    double calculateAverageRatingByProductId(@Param("productId") Long productId);
-=======
-
     @Query("SELECT AVG(f.ratingStar) FROM Feedback f WHERE f.product.id = :productId")
     double calculateAverageRatingByProductId(@Param("productId") Long productId);
 
->>>>>>> 75efdee30aa413fbfa801bfcd40c541054cad646
 }
