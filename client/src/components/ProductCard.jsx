@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import product_default from '../assets/product_default.png'
 const { FaCartShopping, FaHeart } = icons;
 
-const Product = ({ productData }) => {
+const ProductCard = ({ productData }) => {
   const [showOption, setShowOption] = useState(false);
 
   return (
@@ -54,4 +54,4 @@ const Product = ({ productData }) => {
   );
 };
 
-export default Product;
+export default ProductCard;

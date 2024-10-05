@@ -5,6 +5,14 @@ export const apiGetProducts = async (params) =>
         url: "/products",
         method: "get",
         params,
+        paramsSerializer: {
+            encode: (value) => value,
+            serialize: (params) => {
+                return Object.entries(params)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('&');
+            }
+        }
     });
 
 export const apiGetProduct = async (pid) =>
