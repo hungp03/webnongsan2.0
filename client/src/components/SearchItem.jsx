@@ -6,7 +6,7 @@ import 'rc-slider/assets/index.css';
 
 const { FaCaretDown, FaTimes } = icons;
 
-const SearchItem = ({ name, activeClick, changeActiveFilter, range, min, max }) => {
+const SearchItem = ({ name, activeClick, changeActiveFilter, step, min, max }) => {
     const navigate = useNavigate();
     const { category } = useParams();
     const [sliderValue, setSliderValue] = useState([min, max]);
@@ -73,7 +73,7 @@ const SearchItem = ({ name, activeClick, changeActiveFilter, range, min, max }) 
                             range
                             min={min}
                             max={max}
-                            step={1}
+                            step={step}
                             value={sliderValue}
                             onChange={handleSliderChange}
                         />

@@ -156,7 +156,7 @@ const ProductDetail = () => {
             <span className='text-sm text-red-500 ml-2 mt-1 pr-2'>{`Có sẵn: ${product?.quantity}`}</span>
           </div>
           <div className='flex items-center'>
-            {/* {renderStarFromNumber(product?.rating)} */}
+            {product?.rating}
             {renderStarFromNumber(product?.rating)?.map((el, index) => (
               <span key={index}>{el}</span>
             ))}
