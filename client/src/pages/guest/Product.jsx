@@ -17,14 +17,14 @@ const Product = () => {
   const [activeClick, setActiveClick] = useState(null);
   const [params] = useSearchParams();
   const { category } = useParams();
-  const [maxPrice, setMaxPrice] = useState(null);
+  //const [maxPrice, setMaxPrice] = useState(null);
 
   const fetchProducts = async (queries) => {
     const response = await apiGetProducts(queries);
     setProducts(response.data.result);
-    const prices = response.data.result.map((product) => product.price);
-    const max = Math.max(...prices);
-    setMaxPrice(+max);
+    // const prices = response.data.result.map((product) => product.price);
+    // const max = Math.max(...prices);
+    // setMaxPrice(+max);
   };
 
   useEffect(() => {

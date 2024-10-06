@@ -30,7 +30,6 @@ const Login = () => {
     const { name, ...data } = payload;
     if (isRegister) {
       const res = await apiRegister(payload);
-      console.log(res)
       setLoading(false);
       if (res.statusCode === 201) {
         Swal.fire(
@@ -49,7 +48,6 @@ const Login = () => {
     }
     else {
       const result = await apiLogin(data)
-      console.log(result)
       if (result.statusCode === 200) {
         dispatch(login({ isLoggedIn: true, token: result.data.access_token, userData: result.data.user }));
         setLoading(true);
