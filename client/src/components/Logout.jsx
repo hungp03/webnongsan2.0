@@ -2,15 +2,19 @@ import { useDispatch } from "react-redux";
 import { logout } from "../store/user/userSlice";
 import { apiLogout } from "../apis";
 import icons from '../utils/icons'
+import { useNavigate } from "react-router-dom";
+import path from "../utils/path";
+
 const { IoLogOutOutline } = icons
 
 const Logout = () => {
   const dispatch = useDispatch();
-
+  const nav = useNavigate()
   const handleLogout = async () => {
     try {
       await apiLogout();
       dispatch(logout());
+      nav(`/${path.HOME}`);
     } catch (error) {
       console.error('Error logging out:', error);
     }

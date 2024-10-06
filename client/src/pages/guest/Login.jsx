@@ -30,7 +30,6 @@ const Login = () => {
     const { name, ...data } = payload;
     if (isRegister) {
       const res = await apiRegister(payload);
-      console.log(res)
       setLoading(false);
       if (res.statusCode === 201) {
         Swal.fire(

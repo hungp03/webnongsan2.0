@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Breadcrumb, ProductCard, SearchItem } from '../../components';
+import { Breadcrumb, ProductCard, FilterItem } from '../../components';
 import { apiGetProducts } from '../../apis';
 import Masonry from 'react-masonry-css';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,14 +17,14 @@ const Product = () => {
   const [activeClick, setActiveClick] = useState(null);
   const [params] = useSearchParams();
   const { category } = useParams();
-  const [maxPrice, setMaxPrice] = useState(null);
+  //const [maxPrice, setMaxPrice] = useState(null);
 
   const fetchProducts = async (queries) => {
     const response = await apiGetProducts(queries);
     setProducts(response.data.result);
-    const prices = response.data.result.map((product) => product.price);
-    const max = Math.max(...prices);
-    setMaxPrice(+max);
+    // const prices = response.data.result.map((product) => product.price);
+    // const max = Math.max(...prices);
+    // setMaxPrice(+max);
   };
 
   useEffect(() => {
@@ -85,8 +85,8 @@ const Product = () => {
       <div className='w-main border p-4 flex justify-between mt-8 m-auto'>
         <div className='w-4/5 flex-auto flex items-center gap-4'>
           <span className='font-semibold text-sm'>Filter</span>
-          <SearchItem name='price' activeClick={activeClick} changeActiveFilter={changeActiveFilter} range min={0} max={maxPrice} step={1000}/>
-          <SearchItem name='rating' activeClick={activeClick} changeActiveFilter={changeActiveFilter} range min={0} max={5} step={0.5}/>
+          <FilterItem name='price' activeClick={activeClick} changeActiveFilter={changeActiveFilter} range min={0} max={1000000} step={1000}/>
+          <FilterItem name='rating' activeClick={activeClick} changeActiveFilter={changeActiveFilter} range min={0} max={5} step={0.5}/>
         </div>
         <div className='w-1/5 flex-auto'>Sort</div>
       </div>
