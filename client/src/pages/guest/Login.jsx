@@ -49,6 +49,7 @@ const Login = () => {
     }
     else {
       const result = await apiLogin(data)
+      console.log(result)
       if (result.statusCode === 200) {
         dispatch(login({ isLoggedIn: true, token: result.data.access_token, userData: result.data.user }));
         setLoading(true);
