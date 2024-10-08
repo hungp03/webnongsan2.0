@@ -6,6 +6,7 @@ import Masonry from 'react-masonry-css';
 import { v4 as uuidv4 } from 'uuid';
 import SortItem from '../../components/SortItem';
 import { sortProductOption } from '../../utils/constants';
+import { ClipLoader } from "react-spinners";
 
 const breakpointColumnsObj = {
   default: 5,
@@ -14,29 +15,62 @@ const breakpointColumnsObj = {
   500: 2
 };
 
+// Loading spinner styles
+const override = {
+  display: "block",
+  margin: "0 auto",
+};
+
 const Product = () => {
   const [products, setProducts] = useState(null);
   const [activeClick, setActiveClick] = useState(null);
   const [params] = useSearchParams();
-  // console.log(params)
   const { category } = useParams();
-  const [maxPrice, setMaxPrice] = useState(null);
-  const [sortOption, setSortOption] = useState('')
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProductLoading, setIsProductLoading] = useState(true);
+  const [sortOption, setSortOption] = useState('');
+  const [error, setError] = useState(null);
 
   const fetchMaxPrice = async () => {
-    const res = await apiGetMaxPrice(category);
-    if (res.statusCode === 200) {
-      setMaxPrice(res.data)
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await apiGetMaxPrice(category);
+      if (res.statusCode === 200) {
+        setMaxPrice(res.data);
+      } else {
+        throw new Error('Failed to fetch max price');
+      }
+    } catch (error) {
+      console.error('Error fetching max price:', error);
+      setError('Failed to load price range. Please try again later.');
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
+
   const fetchProducts = async (queries) => {
-    const response = await apiGetProducts(queries);
-    setProducts(response.data.result);
+    try {
+      setIsProductLoading(true);
+      setError(null);
+      const response = await apiGetProducts(queries);
+      if (response.data) {
+        setProducts(response.data.result);
+      } else {
+        throw new Error('Failed to fetch products');
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError('Failed to load products. Please try again later.');
+    } finally {
+      setIsProductLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchMaxPrice()
-  }, [category])
+    fetchMaxPrice();
+  }, [category]);
 
   useEffect(() => {
     const sortValue = params.get('sort') || '';
@@ -44,7 +78,6 @@ const Product = () => {
   }, [params]);
   
   useEffect(() => {
-    
     let queries = {
       page: 1,
       size: 10,
@@ -87,12 +120,20 @@ const Product = () => {
     }
 
     fetchProducts(queries);
-  }, [params, sortOption]);
+  }, [params, sortOption, category]);
 
   const changeActiveFilter = useCallback((name) => {
     if (activeClick === name) setActiveClick(null);
     else setActiveClick(name);
   }, [activeClick]);
+
+  if (error) {
+    return (
+      <div className="w-full h-[200px] flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className='w-full'>
@@ -102,26 +143,78 @@ const Product = () => {
           <Breadcrumb category={category} />
         </div>
       </div>
+
       <div className='w-main border p-4 flex justify-between mt-8 m-auto'>
         <div className='w-4/5 flex-auto flex items-center gap-4'>
           <span className='font-semibold text-sm'>Lọc</span>
-          <FilterItem name='price' activeClick={activeClick} changeActiveFilter={changeActiveFilter} range min={0} max={maxPrice} step={1000} />
-          <FilterItem name='rating' activeClick={activeClick} changeActiveFilter={changeActiveFilter} range min={0} max={5} step={0.5} />
+          {isLoading ? (
+            <div className="flex items-center justify-center w-40">
+              <ClipLoader
+                size={30}
+                color={"#123abc"}
+                loading={isLoading}
+                cssOverride={override}
+                aria-label="Loading Spinner"
+              />
+            </div>
+          ) : (
+            <FilterItem 
+              name='price' 
+              activeClick={activeClick} 
+              changeActiveFilter={changeActiveFilter} 
+              range 
+              min={0} 
+              max={maxPrice} 
+              step={1000} 
+            />
+          )}
+          <FilterItem 
+            name='rating' 
+            activeClick={activeClick} 
+            changeActiveFilter={changeActiveFilter} 
+            range 
+            min={0} 
+            max={5} 
+            step={0.5} 
+          />
         </div>
         <div className='w-1/5 flex-auto'>
-          <SortItem sortOption={sortOption} setSortOption={setSortOption} sortOptions={sortProductOption} />
+          <SortItem 
+            sortOption={sortOption} 
+            setSortOption={setSortOption} 
+            sortOptions={sortProductOption} 
+          />
         </div>
       </div>
+
       <div className='mt-8 w-main m-auto'>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid flex mx-0"
-          columnClassName="my-masonry-grid_column mb-[-20px]">
-          {products?.map((e) => (
-            <ProductCard key={uuidv4()} productData={e} />
-          ))}
-        </Masonry>
+        {isProductLoading ? (
+          <div className="flex items-center justify-center h-[400px]">
+            <ClipLoader
+              size={50}
+              color={"#123abc"}
+              loading={isProductLoading}
+              cssOverride={override}
+              aria-label="Loading Products"
+            />
+          </div>
+        ) : products?.length > 0 ? (
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="my-masonry-grid flex mx-0"
+            columnClassName="my-masonry-grid_column mb-[-20px]"
+          >
+            {products.map((e) => (
+              <ProductCard key={uuidv4()} productData={e} />
+            ))}
+          </Masonry>
+        ) : (
+          <div className="flex items-center justify-center h-[200px] text-gray-500">
+            No products found
+          </div>
+        )}
       </div>
+      
       <div className='w-full h-[400px]'></div>
     </div>
   );
