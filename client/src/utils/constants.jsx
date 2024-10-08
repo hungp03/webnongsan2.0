@@ -44,27 +44,37 @@ export const productExtraInfo = [{
   icon: <FaPhone />
 }
 ]
+
 export const voteOption = [
   {
     id: 1,
-    text:"Rất tệ"
+    text: "Rất tệ"
   },
   {
     id: 2,
-    text:"Tệ"
+    text: "Tệ"
   },
   {
     id: 3,
-    text:"Bình thường"
+    text: "Bình thường"
   },
   {
     id: 4,
-    text:"Tốt"
+    text: "Tốt"
   },
   {
     id: 5,
-    text:"Rất tốt"
+    text: "Rất tốt"
   }
 ]
+
+export const sortProductOption = [
+  { value: 'price-asc', label: 'Giá thấp đến cao' },
+  { value: 'price-desc', label: 'Giá cao đến thấp' },
+  { value: 'rating-asc', label: 'Rating thấp' },
+  { value: 'rating-desc', label: 'Rating cao' },
+  { value: 'sold-desc', label: 'Bán chạy' },
+  { value: 'createdAt-desc', label: 'Mới nhất' }
+];
 
 
