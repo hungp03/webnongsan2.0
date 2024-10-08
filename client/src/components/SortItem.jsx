@@ -23,7 +23,7 @@ const SortItem = ({ sortOptions, sortOption, setSortOption }) => {
         id="sort"
         value={sortOption}
         onChange={handleSortChange}
-        className="border p-1 rounded w-[200px] text-sm"
+        className="border p-1 rounded w-[200px] text-xs"
       >
         <option value="" className='text-xs'>Select</option>
         {sortOptions.map((option) => (

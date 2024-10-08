@@ -97,7 +97,7 @@ public class AuthController {
     }
 
     @GetMapping("auth/refresh")
-    @ApiMessage("Get new refresh token")
+    @ApiMessage("Get new token")
     public ResponseEntity<ResLoginDTO> getNewRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "none") String refreshToken) throws ResourceInvalidException {
         if (refreshToken.equals("none")) {
             throw new ResourceInvalidException("Vui lòng đăng nhập");
