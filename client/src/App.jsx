@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react'
-import path from './utils/path'
+import path from '@/utils/path'
 import { Route, Routes, useLocation} from "react-router-dom";
-import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword} from "./pages/guest";
+import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword} from "@/pages/guest";
 import { useDispatch, useSelector } from "react-redux";
-import { getCategories } from "./store/app/asyncActions";
+import { getCategories } from "@/store/app/asyncActions";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { Modal } from './components';
+import { Modal } from '@/components';
 
 const App = () => {
   const dispatch = useDispatch();

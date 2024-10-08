@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from 'react-hook-form';
 import { toast } from "react-toastify";
-import { apiForgotPassword } from "../apis";
+import { apiForgotPassword } from "@/apis";
 import {Button} from './index'
 
 const ForgotPassword = ({ onClose }) => {

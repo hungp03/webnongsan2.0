@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom';
-import { Breadcrumb, ProductCard, FilterItem, Pagination } from '../../components';
-import { apiGetProducts, apiGetMaxPrice } from '../../apis';
+import { Breadcrumb, ProductCard, FilterItem, Pagination } from '@/components';
+import { apiGetProducts, apiGetMaxPrice } from '@/apis';
 import Masonry from 'react-masonry-css';
 import {v4 as uuidv4} from 'uuid'
-import SortItem from '../../components/SortItem';
-import { sortProductOption } from '../../utils/constants';
+import SortItem from '@/components/SortItem';
+import { sortProductOption } from '@/utils/constants';
 import { ClipLoader } from "react-spinners";
 
 const breakpointColumnsObj = {

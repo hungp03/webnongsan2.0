@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { InputField, Button, ForgotPassword } from "../../components";
+import { InputField, Button, ForgotPassword } from "@/components";
 import Swal from 'sweetalert2'
 import { apiLogin, apiRegister } from "../../apis";
 import { useNavigate, Link } from "react-router-dom";

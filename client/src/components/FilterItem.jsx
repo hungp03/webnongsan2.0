@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import icons from '../utils/icons';
+import icons from '@/utils/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';

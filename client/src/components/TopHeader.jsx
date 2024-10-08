@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import path from "../utils/path";
-import { getCurrentUser } from "../store/user/asyncActions";
+import path from "@/utils/path";
+import { getCurrentUser } from "@/store/user/asyncActions";
 //gọi action từ redux -> useDispatch
 //lấy giá trị trong redux -> useSelector 
 import { useDispatch, useSelector } from 'react-redux'

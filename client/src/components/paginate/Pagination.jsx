@@ -1,5 +1,5 @@
 import React from "react";
-import { usePaginate } from "../../utils/helper";
+import { usePaginate } from "@/utils/helper";
 import PagiItem from "./PagiItem";
 
 const Pagination = ({ totalPage, currentPage, pageSize, totalProduct, onPageChange, siblingCount = 1 }) => {

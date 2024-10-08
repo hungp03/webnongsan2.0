@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '../../apis';
-import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '../../components';
-import { formatMoney, renderStarFromNumber } from '../../utils/helper'
-import product_default from '../../assets/product_default.png'
-import { productExtraInfo } from '../../utils/constants';
-import Votebar from '../../components/vote/Votebar';
+import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '@/apis';
+import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
+import { formatMoney, renderStarFromNumber } from '@/utils/helper'
+import product_default from '@/assets/product_default.png'
+import { productExtraInfo } from '@/utils/constants';
+import Votebar from '@/components/vote/Votebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { showModal } from '../../store/app/appSlice'
+import { showModal } from '@/store/app/appSlice'
 import Swal from 'sweetalert2';
-import path from '../../utils/path';
+import path from '@/utils/path';
 import { useNavigate } from 'react-router-dom';
-import Pagination from '../../components/paginate/Pagination';
+import Pagination from '@/components/paginate/Pagination';
 
 const ProductDetail = () => {
   const { pid, productname, category } = useParams();
