@@ -159,7 +159,7 @@ const Product = () => {
       </div>
 
       <div className='w-main border p-4 flex justify-between mt-8 m-auto'>
-        <div className='w-4/5 flex-auto flex items-center gap-4'>
+        <div className='w-3/4 flex-auto flex items-center gap-4'>
           <span className='font-semibold text-sm'>Lọc</span>
           {isLoading ? (
             <div className="flex items-center justify-center w-40">
@@ -192,7 +192,7 @@ const Product = () => {
             step={0.5}
           />
         </div>
-        <div className='w-1/5 flex-auto'>
+        <div className='w-1/4 flex-auto'>
           <SortItem
             sortOption={sortOption}
             setSortOption={setSortOption}
