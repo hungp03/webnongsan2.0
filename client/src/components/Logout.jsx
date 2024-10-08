@@ -1,9 +1,9 @@
 import { useDispatch } from "react-redux";
-import { logout } from "../store/user/userSlice";
-import { apiLogout } from "../apis";
-import icons from '../utils/icons'
+import { logout } from "@/store/user/userSlice";
+import { apiLogout } from "@/apis";
+import icons from '@/utils/icons'
 import { useNavigate } from "react-router-dom";
-import path from "../utils/path";
+import path from "@/utils/path";
 
 const { IoLogOutOutline } = icons
 

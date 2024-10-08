@@ -1,7 +1,7 @@
 import React, { memo, useRef, useEffect, useState } from "react";
-import { voteOption } from "../../utils/constants";
+import { voteOption } from "@/utils/constants";
 import { AiFillStar } from "react-icons/ai";
-import { Button } from '../../components';
+import { Button } from '@/components';
 const VoteOption = ({ nameProduct, handleSubmitOption }) => {
     const modalRef = useRef()
     const [chosenScore, setChosenScore] = useState(null)

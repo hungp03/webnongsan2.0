@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { formatMoney, renderStarFromNumber } from "../utils/helper";
+import { formatMoney, renderStarFromNumber } from "@/utils/helper";
 import { SelectOption } from ".";
-import icons from "../utils/icons";
+import icons from "@/utils/icons";
 import { Link } from "react-router-dom";
-import product_default from '../assets/product_default.png'
+import product_default from '@/assets/product_default.png'
 const { FaCartShopping, FaHeart } = icons;
 
 const ProductCard = ({ productData }) => {

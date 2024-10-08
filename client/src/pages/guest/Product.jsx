@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { Breadcrumb, ProductCard, FilterItem } from '../../components';
-import { apiGetProducts, apiGetMaxPrice } from '../../apis';
+import { useParams, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom';
+import { Breadcrumb, ProductCard, FilterItem, Pagination } from '@/components';
+import { apiGetProducts, apiGetMaxPrice } from '@/apis';
 import Masonry from 'react-masonry-css';
-import { v4 as uuidv4 } from 'uuid';
-import SortItem from '../../components/SortItem';
-import { sortProductOption } from '../../utils/constants';
+import {v4 as uuidv4} from 'uuid'
+import SortItem from '@/components/SortItem';
+import { sortProductOption } from '@/utils/constants';
 import { ClipLoader } from "react-spinners";
 
 const breakpointColumnsObj = {
@@ -31,6 +31,7 @@ const Product = () => {
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [sortOption, setSortOption] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   const fetchMaxPrice = async () => {
     try {
@@ -40,11 +41,11 @@ const Product = () => {
       if (res.statusCode === 200) {
         setMaxPrice(res.data);
       } else {
-        throw new Error('Failed to fetch max price');
+        throw new Error('Lỗi khi lấy giá tối đa');
       }
     } catch (error) {
       console.error('Error fetching max price:', error);
-      setError('Failed to load price range. Please try again later.');
+      setError('Lỗi khi lấy khoảng giá, hãy thử lại');
     } finally {
       setIsLoading(false);
     }
@@ -55,14 +56,15 @@ const Product = () => {
       setIsProductLoading(true);
       setError(null);
       const response = await apiGetProducts(queries);
-      if (response.data) {
-        setProducts(response.data.result);
+      if (response.statusCode === 200) {
+        setProducts(response.data);
+        console.log(response.data)
       } else {
-        throw new Error('Failed to fetch products');
+        throw new Error('Lỗi lấy thông tin sản phẩm');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Failed to load products. Please try again later.');
+      setError('Lỗi lấy thông tin sản phẩm. Hãy thử lại');
     } finally {
       setIsProductLoading(false);
     }
@@ -76,10 +78,10 @@ const Product = () => {
     const sortValue = params.get('sort') || '';
     setSortOption(sortValue);
   }, [params]);
-  
+
   useEffect(() => {
     let queries = {
-      page: 1,
+      page: params.get('page') || 1,
       size: 10,
       filter: []
     };
@@ -108,6 +110,18 @@ const Product = () => {
       queries.filter.push(`price >= ${priceRange[0]} and price <= ${priceRange[1]}`);
     }
 
+    // Kiểm tra filter thay đổi và page khác 1 thì reset page về 1 và cập nhật URL
+    if ((ratings.length > 0 || priceRange.length > 0) && params.get('page') !== '1') {
+      // Reset page về 1
+      queries.page = 1; 
+      // Cập nhật lại URL với page = 1
+      const newParams = { ...Object.fromEntries(params.entries()), page: 1 };
+      navigate({
+        pathname: `/${category}`,
+        search: `${createSearchParams(newParams)}`
+      });
+    }
+
     if (sortOption) {
       const [sortField, sortDirection] = sortOption.split('-');
       queries.sort = `${sortField},${sortDirection}`;
@@ -120,7 +134,7 @@ const Product = () => {
     }
 
     fetchProducts(queries);
-  }, [params, sortOption, category]);
+  }, [params, sortOption, category, navigate])
 
   const changeActiveFilter = useCallback((name) => {
     if (activeClick === name) setActiveClick(null);
@@ -158,31 +172,31 @@ const Product = () => {
               />
             </div>
           ) : (
-            <FilterItem 
-              name='price' 
-              activeClick={activeClick} 
-              changeActiveFilter={changeActiveFilter} 
-              range 
-              min={0} 
-              max={maxPrice} 
-              step={1000} 
+            <FilterItem
+              name='price'
+              activeClick={activeClick}
+              changeActiveFilter={changeActiveFilter}
+              range
+              min={0}
+              max={maxPrice}
+              step={1000}
             />
           )}
-          <FilterItem 
-            name='rating' 
-            activeClick={activeClick} 
-            changeActiveFilter={changeActiveFilter} 
-            range 
-            min={0} 
-            max={5} 
-            step={0.5} 
+          <FilterItem
+            name='rating'
+            activeClick={activeClick}
+            changeActiveFilter={changeActiveFilter}
+            range
+            min={0}
+            max={5}
+            step={0.5}
           />
         </div>
         <div className='w-1/5 flex-auto'>
-          <SortItem 
-            sortOption={sortOption} 
-            setSortOption={setSortOption} 
-            sortOptions={sortProductOption} 
+          <SortItem
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            sortOptions={sortProductOption}
           />
         </div>
       </div>
@@ -198,13 +212,13 @@ const Product = () => {
               aria-label="Loading Products"
             />
           </div>
-        ) : products?.length > 0 ? (
+        ) : products?.result?.length > 0 ? (
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="my-masonry-grid flex mx-0"
             columnClassName="my-masonry-grid_column mb-[-20px]"
           >
-            {products.map((e) => (
+            {products.result.map((e) => (
               <ProductCard key={uuidv4()} productData={e} />
             ))}
           </Masonry>
@@ -214,8 +228,10 @@ const Product = () => {
           </div>
         )}
       </div>
-      
-      <div className='w-full h-[400px]'></div>
+
+      <div className='w-main m-auto my-4 flex justify-center'>
+        <Pagination totalPage={products?.meta?.pages} currentPage={products?.meta?.page} totalProduct={products?.meta?.total} pageSize={products?.meta?.pageSize} />
+      </div>
     </div>
   );
 };
