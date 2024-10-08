@@ -69,5 +69,4 @@ public class ProductController {
     public ResponseEntity<Double> getMaxPrice(@PathVariable String category) throws ResourceInvalidException {
         return ResponseEntity.ok(this.productService.getMaxPrice(category));
     }
-
 }

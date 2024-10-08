@@ -11,8 +11,7 @@ const Pagination = ({ totalPage, currentPage, pageSize, totalProduct, onPageChan
             {pagination?.map((el, index) => (
                 <PagiItem
                     key={typeof el === 'object' ? `dots-${index}` : el}
-                    onClick={() => onPageChange(el)}
-                >
+                    onClick={() => onPageChange(el)}>
                     {el}
                 </PagiItem>
             ))}
