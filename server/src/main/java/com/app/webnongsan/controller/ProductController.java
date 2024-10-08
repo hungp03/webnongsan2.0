@@ -63,4 +63,11 @@ public class ProductController {
         }
         return ResponseEntity.ok(this.productService.update(p));
     }
+
+    @GetMapping("products/max-price/{category}")
+    @ApiMessage("Get max price")
+    public ResponseEntity<Double> getMaxPrice(@PathVariable String category) throws ResourceInvalidException {
+        return ResponseEntity.ok(this.productService.getMaxPrice(category));
+    }
+
 }
