@@ -21,24 +21,30 @@ export const apiGetProduct = async (pid) =>
         method: "get",
     });
 
-export const apiGetRecommendedProducts = async(pid) =>
+export const apiGetRecommendedProducts = async (pid) =>
     axiosInstanceRecommended({
         url: `/similar-products/${pid}`,
         method: 'get'
     })
 
 
-export const apiRatings = async (data)=>
+export const apiRatings = async (data) =>
     axiosInstance({
         url: `/product/ratings`,
         method: "put",
         data
     });
 
-export const apiGetRatingsPage = async (pid,params)=>
+export const apiGetRatingsPage = async (pid, params) =>
     axiosInstance({
         url: `/product/ratings/${pid}`,
         method: "get",
         params,
+    });
+
+export const apiGetMaxPrice = async (category) =>
+    axiosInstance({
+        url: `/products/max-price/${category}`,
+        method: "get",
     });
 
