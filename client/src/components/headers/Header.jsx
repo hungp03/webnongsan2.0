@@ -37,7 +37,7 @@ const Header = () => {
           <span>0 sản phẩm</span>
         </div>
 
-        <div className="cursor-pointer hover:underline flex items-center justify-center px-5 gap-2 relative"
+        <div className="cursor-pointer flex items-center justify-center px-5 gap-2 relative"
           onClick={()=>setIsShowOption(prev => !prev)}
           id="profile"
         >

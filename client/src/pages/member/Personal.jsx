@@ -111,12 +111,8 @@ const Personal = ()=>{
                             value: 5,
                             message: 'Địa chỉ phải có ít nhất 5 ký tự'
                         },
-                        maxLength: {
-                            value: 100,
-                            message: 'Địa chỉ không được vượt quá 100 ký tự'
-                        },
                         pattern: {
-                            value: /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯăẠ-ỹ0-9\s,.-/]+$/,
+                            value: /^[0-9a-zA-ZÀÁÂÃÈÉÊỀẾỆÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêềếệìíòóôõùúăđĩũơưạ-ỹ\s,.-/]+$/,
                             message: 'Địa chỉ không được chứa ký tự đặc biệt'
                         }
                     }}
