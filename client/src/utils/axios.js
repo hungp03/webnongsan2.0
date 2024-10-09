@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { store } from '@/store/redux';
 import { setExpiredMessage } from '@/store/user/userSlice';
+import { store } from '@/store/redux';
 //Document: https://axios-http.com/docs/instance
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -40,7 +40,12 @@ axiosInstance.interceptors.response.use(function (response) {
   // Kiểm tra có phải lỗi 401 do access_token hết hạn hay không
   if (error.response.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true;
-
+    
+    
+    const state = store.getState();
+    if (!state.user.isLoggedIn) {
+      return Promise.reject(error); 
+    }
     // Gọi api làm mới token
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, {

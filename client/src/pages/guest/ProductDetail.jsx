@@ -12,9 +12,11 @@ import Swal from 'sweetalert2';
 import path from '@/utils/path';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@/components/paginate/Pagination';
+import clsx from 'clsx';
 
-const ProductDetail = () => {
-  const { pid, productname, category } = useParams();
+const ProductDetail = ({ isQuickView, data }) => {
+
+  const params = useParams();
   const [product, setProduct] = useState(null);
   const [paginate, setPaginate] = useState(null)
   const [feedbacksPage, setFeedbacksPage] = useState(null)
@@ -27,6 +29,19 @@ const ProductDetail = () => {
   const dispatch = useDispatch()
   const [quantity, setQuantity] = useState(1);
   const [recommendedProducts, setRecommendedProducts] = useState(null)
+  const [pid, setPid] = useState(null)
+  const [category, setCategory] = useState(null)
+
+  useEffect(() => { 
+    if (data){
+      setPid(data.pid)
+      setCategory(data.category)
+    }
+    else if (params){
+      setPid(params.pid)
+      setCategory(params.category)
+    }
+  }, [params, data])
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
     //console.log(response)
@@ -136,13 +151,13 @@ const ProductDetail = () => {
   }
   return (
     <div className='w-full'>
-      <div className='h-20 flex justify-center items-center bg-gray-100 '>
+      {!isQuickView && <div className='h-20 flex justify-center items-center bg-gray-100 '>
         <div className='w-main'>
-          <h3 className='font-semibold'>{productname}</h3>
-          <Breadcrumb title={productname} category={category} />
+          <h3 className='font-semibold'>{product?.product_name}</h3>
+          <Breadcrumb title={product?.product_name} category={category} />
         </div>
-      </div>
-      <div className='w-main m-auto mt-4 flex'>
+      </div>}
+      <div className={clsx('w-main m-auto mt-4 flex', )}>
         <div className='flex-4 flex flex-col gap-4 w-2/5'>
           <div className='w-[450px]'>
             <div className='px-2' >
@@ -176,13 +191,13 @@ const ProductDetail = () => {
               </> : <p className='text-red-500'>Sản phẩm đang tạm hết hàng, bạn vui lòng quay lại sau nhé</p>}
           </div>
         </div>
-        <div className='flex-2 w-1/5 ml-4'>
+        {!isQuickView && <div className='flex-2 w-1/5 ml-4'>
           {productExtraInfo.map(e => (
             <ProductExtraInfoItem key={e.id} title={e.title} sub={e.sub} icon={e.icon} />
           ))}
-        </div>
+        </div>}
       </div>
-      <div className='w-main m-auto mt-8'>
+      {!isQuickView && <><div className='w-main m-auto mt-8'>
         <ProductInfomation des={product?.description} review={
           <div>
             <div className='flex p-4'>
@@ -221,18 +236,18 @@ const ProductDetail = () => {
           </div>
         } rerender={rerender} />
       </div>
-      <div className='w-full flex justify-center'>
-        <div className="w-main">
-          <h2 className="text-[20px] uppercase font-semibold py-2 border-b-4 border-main">
-            Sản phẩm tương tự
-          </h2>
-          <div className="grid grid-cols-6 gap-4 mt-4 ">
-            {recommendedProducts?.map((e) => (
-              <ProductCard key={e.id} productData={e} />
-            ))}
+        <div className='w-full flex justify-center'>
+          <div className="w-main">
+            <h2 className="text-[20px] uppercase font-semibold py-2 border-b-4 border-main">
+              Sản phẩm tương tự
+            </h2>
+            <div className="grid grid-cols-6 gap-4 mt-4 ">
+              {recommendedProducts?.map((e) => (
+                <ProductCard key={e.id} productData={e} />
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        </div></>}
     </div>
   )
 }

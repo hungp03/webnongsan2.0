@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/store/user/asyncActions";
 //gọi action từ redux -> useDispatch
 //lấy giá trị trong redux -> useSelector 
 import { useDispatch, useSelector } from 'react-redux'
-import {Logout} from './index'
+import {Logout} from '@/components/index'
 import Swal from "sweetalert2";
 import { clearMessage } from "@/store/user/userSlice";
 
