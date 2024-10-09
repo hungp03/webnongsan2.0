@@ -100,7 +100,6 @@ const Product = () => {
 
     let ratings = [], priceRange = [];
 
-    // Kiểm tra category có tồn tại hay không để tìm sản phẩm
     if (category) {
       queries.filter.push(`category.name~'${category}'`);
     }
@@ -126,13 +125,13 @@ const Product = () => {
     // Kiểm tra filter thay đổi và page khác 1 thì reset page về 1 và cập nhật URL
     if ((ratings.length > 0 || priceRange.length > 0) && params.get('page') !== '1') {
       // Reset page về 1
-      queries.page = 1;
+      queries.page = 1; 
       // Cập nhật lại URL với page = 1
       const newParams = { ...Object.fromEntries(params.entries()), page: 1 };
-      navigate({
-        pathname: category ? `/products/${category}` : `/products`,
-        search: `${createSearchParams(queries)}`,
-      });
+     navigate({
+      pathname: category ? `/products/${category}` : `/products`,
+      search: `${createSearchParams(newParams)}`,
+    });
     }
 
     if (sortOption) {
@@ -147,7 +146,9 @@ const Product = () => {
     }
 
     fetchProducts(queries);
-  }, [params, sortOption, category, navigate]);
+  }, [params, sortOption, category, navigate])
+
+
 
   const changeActiveFilter = useCallback((name) => {
     if (activeClick === name) setActiveClick(null);
