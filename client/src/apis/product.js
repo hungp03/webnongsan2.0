@@ -44,7 +44,9 @@ export const apiGetRatingsPage = async (pid, params) =>
 
 export const apiGetMaxPrice = async (category) =>
     axiosInstance({
-        url: `/products/max-price/${category}`,
+        url: `/products/max-price`,
         method: "get",
+        params: { category },
     });
+
 

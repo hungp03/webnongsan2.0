@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom';
-import { Breadcrumb, ProductCard, FilterItem, Pagination, SortItem} from '@/components';
+import { Breadcrumb, ProductCard, FilterItem, Pagination, SortItem } from '@/components';
 import { apiGetProducts, apiGetMaxPrice } from '@/apis';
 import Masonry from 'react-masonry-css';
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 import { sortProductOption } from '@/utils/constants';
 import { ClipLoader } from "react-spinners";
 
@@ -30,7 +30,11 @@ const Product = () => {
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [sortOption, setSortOption] = useState('');
   const [error, setError] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchMaxPrice();
+  }, [category]);
 
   const fetchMaxPrice = async () => {
     try {
@@ -57,7 +61,6 @@ const Product = () => {
       const response = await apiGetProducts(queries);
       if (response.statusCode === 200) {
         setProducts(response.data);
-        //console.log(response.data)
       } else {
         throw new Error('Lỗi lấy thông tin sản phẩm');
       }
@@ -70,10 +73,6 @@ const Product = () => {
   };
 
   useEffect(() => {
-    fetchMaxPrice();
-  }, [category]);
-
-  useEffect(() => {
     const sortValue = params.get('sort') || '';
     setSortOption(sortValue);
   }, [params]);
@@ -81,15 +80,16 @@ const Product = () => {
   const handlePagination = (page) => {
     const queries = {};
     for (let [key, value] of params.entries()) {
-        queries[key] = value;
+      queries[key] = value;
     }
     if (page) queries.page = page;
 
+    // Điều hướng
     navigate({
-        pathname: `/${category}`,
-        search: `${createSearchParams(queries)}`,
+      pathname: category ? `/products/${category}` : `/products`,
+      search: `${createSearchParams(queries)}`,
     });
-};
+  };
 
   useEffect(() => {
     let queries = {
@@ -100,6 +100,7 @@ const Product = () => {
 
     let ratings = [], priceRange = [];
 
+    // Kiểm tra category có tồn tại hay không để tìm sản phẩm
     if (category) {
       queries.filter.push(`category.name~'${category}'`);
     }
@@ -125,12 +126,12 @@ const Product = () => {
     // Kiểm tra filter thay đổi và page khác 1 thì reset page về 1 và cập nhật URL
     if ((ratings.length > 0 || priceRange.length > 0) && params.get('page') !== '1') {
       // Reset page về 1
-      queries.page = 1; 
+      queries.page = 1;
       // Cập nhật lại URL với page = 1
       const newParams = { ...Object.fromEntries(params.entries()), page: 1 };
       navigate({
-        pathname: `/${category}`,
-        search: `${createSearchParams(newParams)}`
+        pathname: category ? `/products/${category}` : `/products`,
+        search: `${createSearchParams(queries)}`,
       });
     }
 
@@ -146,7 +147,7 @@ const Product = () => {
     }
 
     fetchProducts(queries);
-  }, [params, sortOption, category, navigate])
+  }, [params, sortOption, category, navigate]);
 
   const changeActiveFilter = useCallback((name) => {
     if (activeClick === name) setActiveClick(null);
@@ -165,7 +166,7 @@ const Product = () => {
     <div className='w-full'>
       <div className='h-20 flex justify-center items-center bg-gray-100'>
         <div className='w-main'>
-          <h3 className='font-semibold uppercase'>{category}</h3>
+          <h3 className='font-semibold uppercase'>{category || 'Tất cả sản phẩm'}</h3>
           <Breadcrumb category={category} />
         </div>
       </div>
@@ -241,15 +242,15 @@ const Product = () => {
         )}
       </div>
 
-      <div className='w-main m-auto my-4 flex justify-center'>
-      <Pagination
-                    totalPage={products?.meta?.pages}
-                    currentPage={products?.meta?.page}
-                    totalProduct={products?.meta?.total}
-                    pageSize={products?.meta?.pageSize}
-                    onPageChange={handlePagination}
-                />
-      </div>
+      {products?.meta?.pages > 1 && <div className='w-main m-auto my-4 flex justify-center'>
+        <Pagination
+          totalPage={products?.meta?.pages}
+          currentPage={products?.meta?.page}
+          totalProduct={products?.meta?.total}
+          pageSize={products?.meta?.pageSize}
+          onPageChange={handlePagination}
+        />
+      </div>}
     </div>
   );
 };

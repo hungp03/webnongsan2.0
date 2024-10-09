@@ -32,12 +32,12 @@ const ProductDetail = ({ isQuickView, data }) => {
   const [pid, setPid] = useState(null)
   const [category, setCategory] = useState(null)
 
-  useEffect(() => { 
-    if (data){
+  useEffect(() => {
+    if (data) {
       setPid(data.pid)
       setCategory(data.category)
     }
-    else if (params){
+    else if (params) {
       setPid(params.pid)
       setCategory(params.category)
     }
@@ -78,26 +78,33 @@ const ProductDetail = ({ isQuickView, data }) => {
 
   useEffect(() => {
     if (pid) {
-      fetchProductData()
-      //fetchRecommended()
+      fetchProductData();
+      if (!isQuickView) {
+        fetchFeedbacksPageData(currentPage);
+        fetchFeedbacksData();
+        // fetchRecommended();
+      }
     }
-  }, [pid])
+  }, [pid]);
 
   useEffect(() => {
-    if (pid)
-      fetchFeedbacksPageData(currentPage)
-    fetchFeedbacksData()
-  }, [pid, update])
+    if (!isQuickView && pid) {
+      fetchFeedbacksPageData(currentPage);
+    }
+  }, [pid, currentPage]);
 
   useEffect(() => {
-    if (pid)
-      fetchFeedbacksPageData(currentPage)
-  }, [pid, currentPage])
+    if (!isQuickView && pid) {
+      fetchFeedbacksData();
+      fetchFeedbacksPageData(currentPage);
+    }
+  }, [pid, update]);
 
   useEffect(() => {
-    fetchUserData()
-  }, [])
-
+    if (!isQuickView) {
+      fetchUserData();
+    }
+  }, []);
 
   // const handleQuantity = useCallback((x) => {
   //   if (!Number(x) || Number(x) < 1) {
@@ -150,22 +157,22 @@ const ProductDetail = ({ isQuickView, data }) => {
     }
   }
   return (
-    <div className='w-full'>
-      {!isQuickView && <div className='h-20 flex justify-center items-center bg-gray-100 '>
+    <div className='w-full' onClick={e => e.stopPropagation()}>
+      {!isQuickView && <div className='h-20 flex justify-center items-center bg-gray-100'>
         <div className='w-main'>
           <h3 className='font-semibold'>{product?.product_name}</h3>
           <Breadcrumb title={product?.product_name} category={category} />
         </div>
       </div>}
-      <div className={clsx('w-main m-auto mt-4 flex', )}>
-        <div className='flex-4 flex flex-col gap-4 w-2/5'>
+      <div className={clsx('m-auto mt-4 flex', isQuickView ? 'max-w-[900px] max-h-[80vh] gap-5 p-4 overflow-y-auto' : 'w-main')}>
+        <div className={clsx('flex-4 flex flex-col gap-4 ', isQuickView ? 'w-1/2' : 'w-2/5')}>
           <div className='w-[450px]'>
             <div className='px-2' >
               <img src={product?.imageUrl || product_default} alt='product' className='object-cover' />
             </div>
           </div>
         </div>
-        <div className='w-2/5 flex flex-col gap-4'>
+        <div className={clsx('flex flex-col gap-4', isQuickView ? 'w-1/2' : 'w-2/5 ')}>
           <div className='flex justify-between items-center'>
             <h2 className='text-[30px] font-semibold'>{`${formatMoney(product?.price)}đ`}</h2>
             <span className='text-sm text-red-500 ml-2 mt-1 pr-2'>{`Có sẵn: ${product?.quantity}`}</span>
@@ -229,10 +236,10 @@ const ProductDetail = ({ isQuickView, data }) => {
                   updatedAt={el.updatedAt} name={el.userName} image={el.userAvatarUrl} />
               ))}
             </div>
-            <div>
+            {paginate?.page > 1 && <div>
               <Pagination totalPage={paginate?.pages} currentPage={paginate?.page}
                 pageSize={paginate?.pageSize} totalProduct={paginate?.total} onPageChange={(page) => setCurrentPage(page)} />
-            </div>
+            </div>}
           </div>
         } rerender={rerender} />
       </div>

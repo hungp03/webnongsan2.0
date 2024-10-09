@@ -20,7 +20,7 @@ const FilterItem = ({ name, activeClick, changeActiveFilter, step, min, max }) =
         const queries = new URLSearchParams(window.location.search);
         queries.set(name, tempSliderValue.join('-'));
         navigate({
-            pathname: `/${category}`,
+            pathname: `/products/${category}`,
             search: queries.toString()
         }, { replace: true });
 
@@ -32,7 +32,7 @@ const FilterItem = ({ name, activeClick, changeActiveFilter, step, min, max }) =
         queries.delete(name);
 
         navigate({
-            pathname: `/${category}`,
+            pathname: `/products/${category}`,
             search: queries.toString()
         }, { replace: true });
 
