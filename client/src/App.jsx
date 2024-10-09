@@ -21,7 +21,7 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div className="min-h-screen font-main relative">
+    <div className="min-h-screen font-main">
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes> 
         <Route path={path.PUBLIC} element={<Public />}>

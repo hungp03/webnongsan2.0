@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom';
-import { Breadcrumb, ProductCard, FilterItem, Pagination } from '@/components';
+import { Breadcrumb, ProductCard, FilterItem, Pagination, SortItem} from '@/components';
 import { apiGetProducts, apiGetMaxPrice } from '@/apis';
 import Masonry from 'react-masonry-css';
 import {v4 as uuidv4} from 'uuid'
-import SortItem from '@/components/SortItem';
 import { sortProductOption } from '@/utils/constants';
 import { ClipLoader } from "react-spinners";
 
@@ -58,7 +57,7 @@ const Product = () => {
       const response = await apiGetProducts(queries);
       if (response.statusCode === 200) {
         setProducts(response.data);
-        console.log(response.data)
+        //console.log(response.data)
       } else {
         throw new Error('Lỗi lấy thông tin sản phẩm');
       }
@@ -78,6 +77,19 @@ const Product = () => {
     const sortValue = params.get('sort') || '';
     setSortOption(sortValue);
   }, [params]);
+
+  const handlePagination = (page) => {
+    const queries = {};
+    for (let [key, value] of params.entries()) {
+        queries[key] = value;
+    }
+    if (page) queries.page = page;
+
+    navigate({
+        pathname: `/${category}`,
+        search: `${createSearchParams(queries)}`,
+    });
+};
 
   useEffect(() => {
     let queries = {
@@ -230,7 +242,13 @@ const Product = () => {
       </div>
 
       <div className='w-main m-auto my-4 flex justify-center'>
-        <Pagination totalPage={products?.meta?.pages} currentPage={products?.meta?.page} totalProduct={products?.meta?.total} pageSize={products?.meta?.pageSize} />
+      <Pagination
+                    totalPage={products?.meta?.pages}
+                    currentPage={products?.meta?.page}
+                    totalProduct={products?.meta?.total}
+                    pageSize={products?.meta?.pageSize}
+                    onPageChange={handlePagination}
+                />
       </div>
     </div>
   );

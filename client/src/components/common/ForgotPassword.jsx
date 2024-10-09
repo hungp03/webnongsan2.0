@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from 'react-hook-form';
 import { toast } from "react-toastify";
 import { apiForgotPassword } from "@/apis";
-import {Button} from './index'
+import {Button} from '@/components/index'
 
 const ForgotPassword = ({ onClose }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
