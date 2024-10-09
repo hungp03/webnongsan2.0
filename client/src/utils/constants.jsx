@@ -1,5 +1,6 @@
 import path from "./path";
 import icons from "./icons";
+import { AiOutlineInfo } from "react-icons/ai";
 export const navigation = [
   {
     id: 1,
@@ -76,5 +77,36 @@ export const sortProductOption = [
   { value: 'sold-desc', label: 'Bán chạy' },
   { value: 'createdAt-desc', label: 'Mới nhất' }
 ];
+
+export const memberSidebar = [
+  {
+    id: 1,
+    type: 'SINGLE',
+    text: 'Personal',
+    path: `/${path.MEMBER}/${path.PERSONAL}`,
+    icon: <AiOutlineInfo size={20}/>
+  },
+  {
+    id: 2,
+    type: 'SINGLE',
+    text: 'My Cart',
+    path: `/${path.MEMBER}/${path.MY_CART}`,
+    icon: <AiOutlineInfo size={20}/>
+  },
+  {
+    id: 3,
+    type: 'SINGLE',
+    text: 'Buy Histories',
+    path: `/${path.MEMBER}/${path.HISTORY}`,
+    icon: <AiOutlineInfo size={20}/>
+  },
+  {
+    id: 4,
+    type: 'SINGLE',
+    text: 'Wishlist',
+    path: `/${path.MEMBER}/${path.WISHLIST}`,
+    icon: <AiOutlineInfo size={20}/>
+  },
+]
 
 
