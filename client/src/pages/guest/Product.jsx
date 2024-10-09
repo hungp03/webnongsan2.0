@@ -93,62 +93,54 @@ const Product = () => {
 
   useEffect(() => {
     let queries = {
-      page: params.get('page') || 1,
-      size: 10,
-      filter: []
+        page: params.get('page') || 1,
+        size: 10,
+        filter: []
     };
 
     let ratings = [], priceRange = [];
 
     if (category) {
-      queries.filter.push(`category.name~'${category}'`);
+        queries.filter.push(`category.name~'${category}'`);
     }
 
     for (let [key, value] of params.entries()) {
-      if (key === 'rating') {
-        const ratingValues = value.split('-');
-        ratings.push(...ratingValues);
-      } else if (key === 'price') {
-        const priceValues = value.split('-');
-        priceRange.push(...priceValues);
-      }
+        if (key === 'rating') {
+            const ratingValues = value.split('-');
+            ratings.push(...ratingValues);
+        } else if (key === 'price') {
+            const priceValues = value.split('-');
+            priceRange.push(...priceValues);
+        }
     }
 
     if (ratings.length > 0) {
-      queries.filter.push(`rating >= ${ratings[0]} and rating <= ${ratings[1]}`);
+        queries.filter.push(`rating >= ${ratings[0]} and rating <= ${ratings[1]}`);
     }
 
     if (priceRange.length > 0) {
-      queries.filter.push(`price >= ${priceRange[0]} and price <= ${priceRange[1]}`);
+        queries.filter.push(`price >= ${priceRange[0]} and price <= ${priceRange[1]}`);
     }
 
-    // Kiểm tra filter thay đổi và page khác 1 thì reset page về 1 và cập nhật URL
-    if ((ratings.length > 0 || priceRange.length > 0) && params.get('page') !== '1') {
-      // Reset page về 1
-      queries.page = 1; 
-      // Cập nhật lại URL với page = 1
-      const newParams = { ...Object.fromEntries(params.entries()), page: 1 };
-     navigate({
-      pathname: category ? `/products/${category}` : `/products`,
-      search: `${createSearchParams(newParams)}`,
-    });
+    // Không cần reset page về 1 nếu chỉ thay đổi giữa các trang
+    if (ratings.length > 0 || priceRange.length > 0) {
+        // Nếu có filter, sẽ lấy page từ params
+        queries.page = params.get('page') || 1;
     }
 
     if (sortOption) {
-      const [sortField, sortDirection] = sortOption.split('-');
-      queries.sort = `${sortField},${sortDirection}`;
+        const [sortField, sortDirection] = sortOption.split('-');
+        queries.sort = `${sortField},${sortDirection}`;
     }
 
     if (queries.filter.length > 0) {
-      queries.filter = encodeURIComponent(queries.filter.join(' and '));
+        queries.filter = encodeURIComponent(queries.filter.join(' and '));
     } else {
-      delete queries.filter;
+        delete queries.filter;
     }
 
     fetchProducts(queries);
-  }, [params, sortOption, category, navigate])
-
-
+}, [params, sortOption, category, navigate]);
 
   const changeActiveFilter = useCallback((name) => {
     if (activeClick === name) setActiveClick(null);
