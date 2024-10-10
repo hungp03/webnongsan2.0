@@ -14,7 +14,6 @@ const breakpointColumnsObj = {
   500: 2
 };
 
-// Loading spinner styles
 const override = {
   display: "block",
   margin: "0 auto",
@@ -24,13 +23,24 @@ const Product = () => {
   const [products, setProducts] = useState(null);
   const [activeClick, setActiveClick] = useState(null);
   const [params] = useSearchParams();
-  const { category } = useParams();
+  const { category} = useParams()
   const [maxPrice, setMaxPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [sortOption, setSortOption] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const getPageTitle = () => {
+    const searchTerm = params.get('search');
+    if (searchTerm) {
+      return `Kết quả tìm kiếm cho "${searchTerm}"`;
+    }
+    if (category) {
+      return category;
+    }
+    return 'Tất cả sản phẩm';
+  };
 
   useEffect(() => {
     fetchMaxPrice();
@@ -40,7 +50,7 @@ const Product = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await apiGetMaxPrice(category);
+      const res = await apiGetMaxPrice(category, params.get('search'));
       if (res.statusCode === 200) {
         setMaxPrice(res.data);
       } else {
@@ -84,7 +94,6 @@ const Product = () => {
     }
     if (page) queries.page = page;
 
-    // Điều hướng
     navigate({
       pathname: category ? `/products/${category}` : `/products`,
       search: `${createSearchParams(queries)}`,
@@ -101,7 +110,12 @@ const Product = () => {
     let ratings = [], priceRange = [];
 
     if (category) {
-        queries.filter.push(`category.name~'${category}'`);
+        queries.filter.push(`category.name='${category}'`);
+    }
+
+    const searchTerm = params.get('search');
+    if (searchTerm) {
+        queries.filter.push(`product_name~'${searchTerm}'`);
     }
 
     for (let [key, value] of params.entries()) {
@@ -122,9 +136,7 @@ const Product = () => {
         queries.filter.push(`price >= ${priceRange[0]} and price <= ${priceRange[1]}`);
     }
 
-    // Không cần reset page về 1 nếu chỉ thay đổi giữa các trang
     if (ratings.length > 0 || priceRange.length > 0) {
-        // Nếu có filter, sẽ lấy page từ params
         queries.page = params.get('page') || 1;
     }
 
@@ -159,7 +171,7 @@ const Product = () => {
     <div className='w-full'>
       <div className='h-20 flex justify-center items-center bg-gray-100'>
         <div className='w-main'>
-          <h3 className='font-semibold uppercase'>{category || 'Tất cả sản phẩm'}</h3>
+          <h3 className='font-semibold uppercase'>{getPageTitle()}</h3>
           <Breadcrumb category={category} />
         </div>
       </div>

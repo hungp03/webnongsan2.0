@@ -94,11 +94,13 @@ public class ProductService{
         return this.productRepository.save(curr);
     }
 
-    public double getMaxPrice(String category) throws ResourceInvalidException {
+    public double getMaxPrice(String category, String productName) throws ResourceInvalidException {
         if (category != null && !category.isEmpty() && !this.categoryRepository.existsByName(category)) {
             throw new ResourceInvalidException("Category không tồn tại");
         }
-        return this.productRepository.getMaxPriceByCategory(category);
+
+        return this.productRepository.getMaxPriceByCategoryAndProductName(category, productName);
     }
+
 
 }
