@@ -8,6 +8,7 @@ import com.app.webnongsan.domain.response.user.CreateUserDTO;
 import com.app.webnongsan.domain.response.user.ResLoginDTO;
 import com.app.webnongsan.service.AuthService;
 import com.app.webnongsan.service.EmailService;
+import com.app.webnongsan.service.FileService;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
 import com.app.webnongsan.util.annotation.ApiMessage;
@@ -24,7 +25,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,16 +38,18 @@ public class AuthController {
     private final SecurityUtil securityUtil;
     private final UserService userService;
     private final EmailService emailService;
+    private final FileService fileService;
     private final AuthService authService;
     @Value("${jwt.refreshtoken-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService, AuthService authService) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService, AuthService authService,FileService fileService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
         this.emailService = emailService;
         this.authService = authService;
+        this.fileService = fileService;
     }
 
     @PostMapping("auth/login")
@@ -226,7 +231,7 @@ public class AuthController {
             @RequestParam("email") String email,
             @RequestParam("phone") String phone,
             @RequestParam("address") String address,
-            @RequestParam(value = "avatarUrl", required = false)MultipartFile avatar) throws IOException {
+            @RequestParam(value = "avatarUrl", required = false) MultipartFile avatar) throws IOException {
         String emailLoggedIn = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         // Lấy thông tin người dùng trong db
         User currentUserDB = userService.getUserByUsername(emailLoggedIn);
