@@ -1,3 +1,4 @@
+
 package com.app.webnongsan.config;
 
 import com.app.webnongsan.util.SecurityUtil;
@@ -97,3 +98,4 @@ public class SecurityConfiguration {
         return jwtAuthenticationConverter;
     }
 }
+

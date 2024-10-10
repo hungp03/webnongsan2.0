@@ -56,13 +56,12 @@ const ProductDetail = ({ isQuickView, data }) => {
   //   }
   // }
   const fetchFeedbacksPageData = async (page = 1) => {
-    const response = await apiGetRatingsPage(pid, { page, size: 5 })
-    if (response.statusCode === 200) {
-      setFeedbacksPage(response.data?.result)
-      setPaginate(response.data?.meta)
-      setCurrentPage(page)
-    }
-
+      const response = await apiGetRatingsPage(pid, { page, size: 5 })
+      if (response.statusCode === 200) {
+        setFeedbacksPage(response.data?.result)
+        setPaginate(response.data?.meta)
+        setCurrentPage(page)
+      }
   }
   const fetchFeedbacksData = async () => {
     const response = await apiGetRatingsPage(pid, { page: 1 })
