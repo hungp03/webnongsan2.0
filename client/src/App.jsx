@@ -28,6 +28,7 @@ const App = () => {
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />}></Route>
           <Route path={path.PRODUCTS} element={<Product />}></Route>
+          <Route path={path.PRODUCTS_BASE} element={<Product />}></Route>
           <Route path={path.FOR_YOU} element={<ForYou/>}></Route>
           <Route path={path.PRODUCT_DETAIL} element={<ProductDetail />}></Route>
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />}></Route>

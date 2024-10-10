@@ -12,7 +12,11 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     boolean existsByCategoryId(Long categoryId);
 
-    @Query("select MAX(p.price) from Product p where p.category.name = :category")
-    double getMaxPriceByCategory(@Param("category") String category);
+    @Query("SELECT MAX(p.price) FROM Product p " +
+            "WHERE (:category IS NULL OR p.category.name = :category) " +
+            "AND (:productName IS NULL OR LOWER(p.product_name) LIKE LOWER(CONCAT('%', :productName, '%')))")
+    double getMaxPriceByCategoryAndProductName(@Param("category") String category,
+                                               @Param("productName") String productName);
+
 
 }

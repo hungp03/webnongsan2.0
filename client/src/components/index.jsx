@@ -24,5 +24,6 @@ export {default as Pagination} from './paginate/Pagination'
 export {default as PagiItem} from './paginate/PagiItem'
 export {default as FilterItem} from './common/FilterItem'
 export {default as SortItem} from './common/SortItem'
-export { default as QuickView } from './products/QuickView'
 export {default as MemberSidebar} from './sidebar/MemberSidebar'
+export { default as ProductMiniItem } from './products/ProductMiniItem'
+
