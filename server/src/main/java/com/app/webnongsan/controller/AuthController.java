@@ -218,4 +218,40 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("valid", false));
         }
     }
+
+    @PutMapping("auth/account")
+    @ApiMessage("Update User Information")
+    public ResponseEntity<ResLoginDTO.UserGetAccount> udateUser(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone,
+            @RequestParam("address") String address,
+            @RequestParam(value = "avatarUrl", required = false)MultipartFile avatar) throws IOException {
+        String emailLoggedIn = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        // Lấy thông tin người dùng trong db
+        User currentUserDB = userService.getUserByUsername(emailLoggedIn);
+        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
+        ResLoginDTO.UserGetAccount userGetAccount = new ResLoginDTO.UserGetAccount();
+
+        // Cập nhật thông tin người dùng
+        currentUserDB.setName(name);
+        currentUserDB.setEmail(email);
+        currentUserDB.setPhone(phone);
+        currentUserDB.setAddress(address);
+        // Kiểm tra nếu có avatar mới được upload
+        if (avatar != null && !avatar.isEmpty()) {
+            // Lưu file ảnh vào server hoặc storage và cập nhật URL
+            String avatarUrl = fileService.store(avatar,"avatar");
+            currentUserDB.setAvatarUrl(avatarUrl);
+        }
+        userService.update(currentUserDB);
+        // Lấy thông tin người dùng sau khi cập nhật
+
+        userLogin.setId(currentUserDB.getId());
+        userLogin.setEmail(currentUserDB.getEmail());
+        userLogin.setName(currentUserDB.getName());
+        userLogin.setRole(currentUserDB.getRole());
+
+        return ResponseEntity.ok(userGetAccount);
+    }
 }
